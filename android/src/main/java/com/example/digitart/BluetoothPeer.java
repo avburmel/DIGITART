@@ -5,8 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -49,30 +47,25 @@ public class BluetoothPeer {
                         socket.connect();
                     } catch (IOException connectException) {
                         // Unable to connect; close the socket and return.
-                        Toast.makeText(context, "ERROR1:" + connectException.getMessage(), Toast.LENGTH_SHORT).show();
                         try {
                             socket.close();
                         } catch (IOException closeException) {
-                            Toast.makeText(context, "ERROR2:" + connectException.getMessage(), Toast.LENGTH_SHORT).show();
                             return false;
                         }
                         return false;
                     }
                 }
             } catch (IOException e) {
-                Toast.makeText(context, "ERROR0:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 return false;
             }
             try {
                 output = socket.getOutputStream();
             } catch (IOException e) {
-                Toast.makeText(context, "ERROR4:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 return false;
             }
             try {
                 input = socket.getInputStream();
             } catch (IOException e) {
-                Toast.makeText(context, "ERROR3:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -85,7 +78,7 @@ public class BluetoothPeer {
            // output.write(testMsg.getBytes(StandardCharsets.US_ASCII));
             output.write(message.getBytes(StandardCharsets.US_ASCII));
         } catch (IOException e) {
-            Toast.makeText(context, "ERROR5:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -96,7 +89,7 @@ public class BluetoothPeer {
             String s = new String(buffer, StandardCharsets.US_ASCII);
             Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            Toast.makeText(context, "ERROR6:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
         }
         Settings settings = new Settings();
     }

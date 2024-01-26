@@ -34,15 +34,14 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
         }
     }
-
     public void openSettings(BluetoothDevice peer) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            intent.putExtra(BluetoothDevice.class.getSimpleName(), peer);
-            startActivity(intent);
+        Intent intent = new Intent(this, ImageActivity.class);
+        intent.putExtra(BluetoothDevice.class.getSimpleName(), peer);
+        startActivity(intent);
     }
 
-    public void openSettingsActivity(View v) {
-        Intent intent = new Intent(this, SettingsActivity.class);
+    public void openImageActivity(View v) {
+        Intent intent = new Intent(this, ImageActivity.class);
         startActivity(intent);
     }
 }

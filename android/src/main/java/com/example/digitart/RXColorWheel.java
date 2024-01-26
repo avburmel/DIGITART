@@ -702,5 +702,10 @@ public final class RXColorWheel extends View {
 
     public boolean getStepperMode() {return this.stepperMode;}
 
+    public void setColorOnWheel(int color)
+    {
+
+    }
+
 }
 

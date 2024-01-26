@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 public class Settings {
+    private int num;
     private int mode;
     private int color;
     private int period;
@@ -17,6 +18,7 @@ public class Settings {
     String[] modes = {"STABLE MODE", "RISING MODE", "FALLING MODE", "RISING/FALLING MODE", "FALLING/RISING MODE", };
 
     public Settings() {
+        this.num = 0;
         this.mode = 3;
         this.color = 0xFF0000;
         this.period = 500;
@@ -35,6 +37,14 @@ public class Settings {
                 return;
             }
         }
+    }
+
+    public int getNum() {
+        return this.num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 
     public int getColor() {
@@ -71,13 +81,14 @@ public class Settings {
 
     public String createSettingsMessage() {
         //"DIGITART # 1 # SETTINGS # num 0: smooth 1: color 255: period 400: TSStart 0: TSEnd 400"
-        String msg = "DIGITART # 1 # SETTINGS # num 0: ";
+        String msg = "DIGITART # 1 # SETTINGS # ";
+        String num = Integer.toString(this.num);
         String mode = Integer.toString(this.mode);
         String color = Integer.toString(this.color);
         String period = Integer.toString(this.period);
         String start = Integer.toString(this.TSStart);
         String end = Integer.toString(this.TSEnd);
-        msg = msg + "smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end;
+        msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end;
         return msg;
     }
 }
