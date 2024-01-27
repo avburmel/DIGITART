@@ -2,6 +2,7 @@ package com.example.digitart;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,8 +16,7 @@ public class Settings {
     private int TSStart;
     private int TSEnd;
 
-    String[] modes = {"STABLE MODE", "RISING MODE", "FALLING MODE", "RISING/FALLING MODE", "FALLING/RISING MODE", };
-
+    String[] modes = {"STABLE MODE", "RISING MODE", "FALLING MODE", "RISING/FALLING MODE", "FALLING/RISING MODE"};
     public Settings() {
         this.num = 0;
         this.mode = 3;
@@ -88,7 +88,39 @@ public class Settings {
         String period = Integer.toString(this.period);
         String start = Integer.toString(this.TSStart);
         String end = Integer.toString(this.TSEnd);
-        msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end;
+        msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end + '\0';
+        return msg;
+    }
+
+    public String createSettingsSaveMessage() {
+        //"DIGITART # 1 # SAVE # "
+        String msg = "DIGITART # 1 # SAVE # \0";
+        return msg;
+    }
+
+    public String createSettingsForCatMessage() {
+        //DIGITART # 1 # SETTINGS_FOR_CAT # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
+        String msg = "DIGITART # 1 # SETTINGS_FOR_CAT # ";
+        String num = Integer.toString(this.num);
+        String mode = Integer.toString(this.mode);
+        String color = Integer.toString(this.color);
+        String period = Integer.toString(this.period);
+        String start = Integer.toString(this.TSStart);
+        String end = Integer.toString(this.TSEnd);
+        msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end + '\0';
+        return msg;
+    }
+
+    public String createSettingsForAllMessage() {
+        //DIGITART # 1 # SETTINGS_FOR_ALL # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
+        String msg = "DIGITART # 1 # SETTINGS_FOR_ALL # ";
+        String num = Integer.toString(this.num);
+        String mode = Integer.toString(this.mode);
+        String color = Integer.toString(this.color);
+        String period = Integer.toString(this.period);
+        String start = Integer.toString(this.TSStart);
+        String end = Integer.toString(this.TSEnd);
+        msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end + '\0';
         return msg;
     }
 }

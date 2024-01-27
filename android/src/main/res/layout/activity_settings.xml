@@ -106,10 +106,22 @@
                     android:id="@+id/button_send"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
+                    android:layout_above="@+id/button_save"
                     android:layout_centerHorizontal="true"
                     android:onClick="sendSettings"
                     android:text="SEND"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp" />
+
+                <Button
+                    android:id="@+id/button_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:onClick="saveSettings"
+                    android:text="SAVE"
                     android:textSize="20sp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp" />
