@@ -21,21 +21,36 @@ void ledsSettingsUpdate(void)
   settingsGet(&ledsProfile);
 }
 
-void ledsInit(void)
+static void ledsBegin(void)
 {
   strip.begin();
+}
+
+static void ledsClear(void)
+{
   strip.clear();
-  strip.show();
-  ledsSettingsUpdate();
-  timerGlobal = timerBegin(0, 8000, true);
-  timerAttachInterrupt(timerGlobal, &timerGlobalCB, true);
-  timerAlarmWrite(timerGlobal, 100, true);
-  timerAlarmEnable(timerGlobal);
 }
 
 static void ledsStateShow(void)
 {
   strip.show();
+}
+
+static void ledsSetBright(uint8_t bright)
+{
+  strip.setBrightness(bright);
+}
+
+void ledsInit(void)
+{
+  ledsBegin();
+  ledsClear();
+  ledsSettingsUpdate();
+  ledsStateShow();
+  timerGlobal = timerBegin(0, 8000, true);
+  timerAttachInterrupt(timerGlobal, &timerGlobalCB, true);
+  timerAlarmWrite(timerGlobal, 100, true);
+  timerAlarmEnable(timerGlobal);
 }
 
 static void ledsStateCalc(void)

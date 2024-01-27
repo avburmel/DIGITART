@@ -36,9 +36,13 @@ static int ProtocolGetNumber(char* data, int* number)
   return cnt;
 }
 
-static protocol_ret ProtocolParseDataSettings(char* data)
+static protocol_ret ProtocolParseDataSettings(char* data, commands_t commandCode)
 {
   //DIGITART # 1 # SETTINGS # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
+  //DIGITART # 1 # SETTINGS_FOR_CAT # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
+  //DIGITART # 1 # SETTINGS_FOR_ALL # smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
+  //DIGITART # 1 # SETTINGS_BRIGHT # bright 128
+  //DIGITART # 1 # SAVE
   ledSettings config;
   int temp, ledPos;
   const char* field[6] = {"num ", "smooth ", "color ", "period ", "TSStart ", "TSEnd "};
@@ -82,7 +86,7 @@ static protocol_ret ProtocolParseDataSettings(char* data)
 static protocol_ret ProtocolParseData(char* data)
 {
   if (memcmp(data, PROTOCOL_COMMAND_SETTINGS, sizeof(PROTOCOL_COMMAND_SETTINGS) - 1) == 0)
-    return ProtocolParseDataSettings(data + sizeof(PROTOCOL_COMMAND_SETTINGS) - 1);
+    return ProtocolParseDataSettings(data + sizeof(PROTOCOL_COMMAND_SETTINGS) - 1, SETTINGS);
   return PROTOCOL_ERR_FORMAT;
 }
 
