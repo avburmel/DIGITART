@@ -3,9 +3,8 @@ package com.example.digitart;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothDevice;
-import android.media.MediaPlayer;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -13,40 +12,42 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 public class SettingsActivity extends AppCompatActivity {
     private BluetoothPeer peer;
     private int ledNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
         Bundle arguments = getIntent().getExtras();
-        if (arguments != null) {
-            BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
-            this.peer = new BluetoothPeer(device);
+        BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
+        if (device != null) {
+            peer = new BluetoothPeer(device);
             if (peer.connectBluetooth(this, peer.getDevice())) {
 
             }
-            if (arguments != null) {
-                ledNum = arguments.getInt("button");
-            }
+            ledNum = arguments.getInt("button");
         }
 
-        String[] modes = {"RISING/FALLING MODE", "FALLING/RISING MODE", "RISING MODE", "FALLING MODE", "STABLE MODE"};
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        String[] eyes = {"BOTH EYES", "LEFT EYE", "RIGHT EYE"};
+        Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
+        ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields, eyes);
+        spinnerEyes.setAdapter(adapterSpinnerEyes);
+        String[] modes = {"RISE/FALL", "FALL/RISE", "RISE", "FALL", "STABLE"};
+        Spinner spinnerModes = (Spinner) findViewById(R.id.spinner_mode);
+        ArrayAdapter<String> adapterSpinnerModes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields, modes);
+        spinnerModes.setAdapter(adapterSpinnerModes);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.modes, modes);
-        spinner.setAdapter(adapter);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_choose);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
-        toolbar.setTitle("CATS_TREE");
+        toolbar.setTitle("CAT_" + ledNum);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -56,17 +57,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("ledNum", this.ledNum);
-        savedInstanceState.putParcelable(BluetoothDevice.class.getSimpleName(), (Parcelable) this.peer);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        this.ledNum = savedInstanceState.getInt("ledNum");
-        this.peer = savedInstanceState.getParcelable(BluetoothDevice.class.getSimpleName());
+    protected void onDestroy() {
+        super.onDestroy();
+        if (peer != null)
+            peer.close();
     }
 
     private void defaultSettings() {
@@ -87,12 +81,12 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void sendSettings(View v) {
         Settings settings = new Settings();
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        settings.setNum(ledNum);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_mode);
         settings.setMode((String)spinner.getSelectedItem());
+        settings.setNum(ledNum);
         RXColorWheel colorPicker = (RXColorWheel) findViewById(R.id.color_wheel);
         settings.setColor(colorPicker.getColorPointerCustomColor());
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_choose);
         toolbar.setTitle(Integer.toString(colorPicker.getColorPointerCustomColor()));
         EditText period = (EditText) findViewById(R.id.period);
         settings.setPeriod(Integer.parseInt(period.getText().toString()));

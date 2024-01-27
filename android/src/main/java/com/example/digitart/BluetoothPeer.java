@@ -20,7 +20,6 @@ public class BluetoothPeer {
     private BluetoothSocket socket;
     private InputStream input;
     private OutputStream output;
-
     public BluetoothPeer(BluetoothDevice device) {
         this.device = device;
         this.socket = null;
@@ -73,7 +72,7 @@ public class BluetoothPeer {
     }
 
     public void write(Context context, String message) {
-        String testMsg = "DIGITART # 1 # SETTINGS # num 0: smooth 1: color 255: period 400: TSStart 0: TSEnd 400";
+        //String testMsg = "DIGITART # 1 # SETTINGS # num 0: smooth 1: color 255: period 400: TSStart 0: TSEnd 400";
         try {
            // output.write(testMsg.getBytes(StandardCharsets.US_ASCII));
             output.write(message.getBytes(StandardCharsets.US_ASCII));
@@ -92,5 +91,13 @@ public class BluetoothPeer {
 
         }
         Settings settings = new Settings();
+    }
+
+    public void close() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+
+        }
     }
 }

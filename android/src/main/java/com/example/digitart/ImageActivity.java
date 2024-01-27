@@ -1,7 +1,6 @@
 package com.example.digitart;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -9,12 +8,11 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.Toast;
 
 public class ImageActivity extends AppCompatActivity {
-    private BluetoothDevice device;
+    private BluetoothDevice device = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +20,10 @@ public class ImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
 
         Bundle arguments = getIntent().getExtras();
+
         if (arguments != null) {
             device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
+            Toast.makeText(this, "NULL DEVICE", Toast.LENGTH_SHORT).show();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_image);
@@ -31,7 +31,6 @@ public class ImageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setTitle("CHOOSE_YOUR_CAT");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,14 +42,16 @@ public class ImageActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelable(BluetoothDevice.class.getSimpleName(), device);
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putParcelable(BluetoothDevice.class.getSimpleName(), (Parcelable) this.device);
+        Toast.makeText(this, "SAVED", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        this.device = savedInstanceState.getParcelable(BluetoothDevice.class.getSimpleName());
+        device = savedInstanceState.getParcelable(BluetoothDevice.class.getSimpleName());
+        Toast.makeText(this, "LOADED", Toast.LENGTH_SHORT).show();
     }
 
     public void onClickButton(View v) {

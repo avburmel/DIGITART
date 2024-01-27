@@ -6,49 +6,60 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_choose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/colorPrimary"
-                    android:minHeight="?attr/actionBarSize"
-                    android:theme="?attr/actionBarTheme" />
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_choose" >
 
                 <Spinner
-                    android:id="@+id/spinner"
+                    android:id="@+id/spinner_eye"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/toolbar"
+                    android:layout_below="@+id/toolbar_choose"
+                    android:spinnerMode="dialog" />
+
+                <Spinner
+                    android:id="@+id/spinner_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/spinner_eye"
                     android:spinnerMode="dialog" />
 
                 <com.example.digitart.RXColorWheel
                     android:id="@+id/color_wheel"
                     android:layout_width="match_parent"
-                    android:layout_height="377dp"
+                    android:layout_height="wrap_content"
                     app:isPointerLine = "false"
                     app:colorRingThickness = "0.1"
                     app:isPlacemarks = "false"
                     app:isShadow = "true"
                     app:bgColor = "#579C9C9C"
                     android:layout_centerHorizontal = "true"
-                    android:layout_below="@+id/spinner" />
+                    android:layout_below="@+id/spinner_mode"
+                    android:layout_above="@+id/period" />
 
                 <EditText
                     android:id="@+id/period"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:hint="Period (0 to 9999999999 in 10ms unit)"
                     android:textAlignment="center"
                     android:inputType="number"
                     android:maxLength="10"
                     android:textSize="16sp"
                     android:layout_centerHorizontal = "true"
-                    android:layout_below="@+id/color_wheel" />
+                    android:layout_above="@+id/start"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp" />
 
                 <EditText
                     android:id="@+id/start"
@@ -60,7 +71,9 @@
                     android:maxLength="10"
                     android:textSize="16sp"
                     android:layout_centerHorizontal = "true"
-                    android:layout_below="@+id/period" />
+                    android:layout_above="@+id/end"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp" />
 
                 <EditText
                     android:id="@+id/end"
@@ -71,8 +84,11 @@
                     android:inputType="number"
                     android:maxLength="10"
                     android:textSize="16sp"
+                    android:layout_marginBottom="64dp"
                     android:layout_centerHorizontal = "true"
-                    android:layout_below="@+id/start" />
+                    android:layout_above="@+id/button_default"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp" />
 
                 <Button
                     android:id="@+id/button_default"
@@ -82,7 +98,9 @@
                     android:layout_centerHorizontal="true"
                     android:onClick="setDefaultSettings"
                     android:text="DEFAULT"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp" />
 
                 <Button
                     android:id="@+id/button_send"
@@ -92,7 +110,9 @@
                     android:layout_centerHorizontal="true"
                     android:onClick="sendSettings"
                     android:text="SEND"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp" />
 
         </RelativeLayout>
 
