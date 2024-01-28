@@ -14,15 +14,15 @@ void setup() {
 }
 
 void loop() {
-    uint32_t messageLen = BlueToothLLRead(message); 
-    if (messageLen)
+  uint32_t messageLen = BlueToothLLRead(message); 
+  if (messageLen)    
+  {
+    if (ProtocolParser(message, messageLen) == PROTOCOL_OK)
     {
-      if (ProtocolParser(message, messageLen) == PROTOCOL_OK)
-      {
-        BlueToothLLWrite("OK");
-      }
-      else
-        BlueToothLLWrite("ERROR");
+      BlueToothLLWrite("OK");
     }
+    else
+      BlueToothLLWrite("ERROR");
+  }
   ledsProcess();
 }

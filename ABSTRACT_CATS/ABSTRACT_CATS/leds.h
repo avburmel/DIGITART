@@ -7,5 +7,6 @@
 void ledsInit(void);
 void ledsProcess(void);
 void ledsSettingsUpdate(void);
+void ledsSetBright(uint8_t bright);
 
 #endif

@@ -8,7 +8,7 @@ unsigned short CRC16(const unsigned char* data_p, unsigned char length){
     unsigned char x;
     unsigned short crc = 0xFFFF;
 
-    while (length--){
+    while (length--) {
         x = crc >> 8 ^ *data_p++;
         x ^= x>>4;
         crc = (crc << 8) ^ ((unsigned short)(x << 12)) ^ ((unsigned short)(x <<5)) ^ ((unsigned short)x);
@@ -104,6 +104,7 @@ static void settingsDefaultSave(void)
     settings.config[i].TSEnd = 500;
   }
   raduga();
+  settings.bright = 128;
   settings.crc = CRC16((uint8_t*)(&settings), sizeof(Settings) - sizeof(uint16_t));
 }
 
