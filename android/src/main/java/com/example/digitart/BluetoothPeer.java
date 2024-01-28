@@ -90,7 +90,6 @@ public class BluetoothPeer {
         } catch (IOException e) {
 
         }
-        Settings settings = new Settings();
     }
 
     public void close() {

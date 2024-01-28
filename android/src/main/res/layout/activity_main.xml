@@ -13,7 +13,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:onClick="openImageActivity"
-        android:text="CONNECT"
+        android:text="DEBUG"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

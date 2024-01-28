@@ -19,7 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
     private int ledNum;
 
     String[] eyes = {"BOTH EYES", "LEFT EYE", "RIGHT EYE"};
-    String[] modes = {"RISING/FALLING MODE", "FALLING/RISING MODE", "STABLE_MODE", "RISING MODE", "FALLING MODE"};
+    String[] modes = {"RISING/FALLING MODE", "FALLING/RISING MODE", "STABLE MODE", "RISING MODE", "FALLING MODE"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

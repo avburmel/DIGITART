@@ -23,7 +23,6 @@ public class ImageActivity extends AppCompatActivity {
 
         if (arguments != null) {
             device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
-            Toast.makeText(this, "NULL DEVICE", Toast.LENGTH_SHORT).show();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_image);
@@ -44,14 +43,12 @@ public class ImageActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelable(BluetoothDevice.class.getSimpleName(), device);
         super.onSaveInstanceState(savedInstanceState);
-        Toast.makeText(this, "SAVED", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         device = savedInstanceState.getParcelable(BluetoothDevice.class.getSimpleName());
-        Toast.makeText(this, "LOADED", Toast.LENGTH_SHORT).show();
     }
 
     public void onClickButton(View v) {

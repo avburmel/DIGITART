@@ -9,7 +9,9 @@ hw_timer_t *timerGlobal = NULL;
 volatile uint32_t timerGlobalCnt = 0;
 volatile uint32_t timerGlobalCntPrev = timerGlobalCnt - 1;
 
-volatile Settings ledsProfile;
+Settings ledsProfile;
+
+uint32_t needToUpd = 0;
 
 void IRAM_ATTR timerGlobalCB()
 {
@@ -34,7 +36,6 @@ static void ledsClear(void)
 static void ledsStateShow(void)
 {
   strip.show();
-  delay(5);
 }
 
 void ledsSetBright(uint8_t bright)
@@ -57,12 +58,14 @@ void ledsInit(void)
 
 static void ledsStateCalc(void)
 {
-  uint32_t quant, middlePoint, duty;
-  int state = 0;
+  uint32_t quant, middlePoint, duty, state;
   float brightK;
+  static uint32_t colorsPrev[CONFIG_LED_NUMBER] = {0};
 
   for(int i = 0; i < CONFIG_LED_NUMBER; i++)
   {
+    colorsPrev[i] = ((ledsProfile.config[i].color[0] << 16) | (ledsProfile.config[i].color[1] << 8) | ledsProfile.config[i].color[2]) & 0xFFFFFF;
+    state = 0;
     quant = timerGlobalCnt % ledsProfile.config[i].period;
     if (ledsProfile.config[i].TSStart < ledsProfile.config[i].TSEnd)
     {
@@ -87,10 +90,6 @@ static void ledsStateCalc(void)
         state = 1;
       }
     }
-    // if (state)
-    //   strip.setPixelColor(i, ledsProfile.config[i].color[0], ledsProfile.config[i].color[1], ledsProfile.config[i].color[2]);
-    // else
-    //   strip.setPixelColor(i, 0x00, 0x00, 0x00);
     if (state)
     {
       if (ledsProfile.config[i].smooth == 0)
@@ -139,6 +138,18 @@ static void ledsStateCalc(void)
     }
     else
       strip.setPixelColor(i, 0x00, 0x00, 0x00);
+    
+  }
+
+  //NEED TO UPD?
+  for (int i = 0; i < CONFIG_LED_NUMBER; i++)
+  {
+    uint32_t color = strip.getPixelColor(i) & 0xFFFFFF;
+    if (colorsPrev[i] != color)
+    {
+      needToUpd = 1;
+      break;
+    }     
   }
 }
 
@@ -147,7 +158,12 @@ void ledsProcess(void)
   if (timerGlobalCnt != timerGlobalCntPrev)
   {
     ledsStateCalc();
-    ledsStateShow();
+    if (needToUpd)
+    {
+      ledsStateShow();
+      needToUpd = 0;
+    }
+    
     timerGlobalCntPrev = timerGlobalCnt;
   }
 }
