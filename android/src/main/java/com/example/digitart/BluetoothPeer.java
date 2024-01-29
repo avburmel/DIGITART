@@ -45,13 +45,13 @@ public class BluetoothPeer {
                     try {
                         socket.connect();
                     } catch (IOException connectException) {
-                        // Unable to connect; close the socket and return.
-                        try {
-                            socket.close();
-                        } catch (IOException closeException) {
-                            return false;
-                        }
-                        return false;
+                        return  false;
+//                        try {
+//                            socket.close();
+//                        } catch (IOException closeException) {
+//
+//                        }
+//                        return false;
                     }
                 }
             } catch (IOException e) {

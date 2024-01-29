@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         RecyclerView recyclerView = findViewById(R.id.connectionList);
 
         BluetoothDeviceAdapter.OnStateClickListener stateClickListener = new BluetoothDeviceAdapter.OnStateClickListener() {
@@ -43,5 +43,9 @@ public class MainActivity extends AppCompatActivity {
     public void openImageActivity(View v) {
         Intent intent = new Intent(this, ImageActivity.class);
         startActivity(intent);
+    }
+
+    public void refresh(View v) {
+        recreate();
     }
 }

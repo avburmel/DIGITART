@@ -30,14 +30,17 @@ public class SettingsActivity extends AppCompatActivity {
         BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
         if (device != null) {
             peer = new BluetoothPeer(device);
-            if (peer.connectBluetooth(this, peer.getDevice())) {
-
+            if (peer.connectBluetooth(this, peer.getDevice()) == false) {
+                Toast.makeText(this, "FAIL_TO_CONNECT", Toast.LENGTH_SHORT).show();
+                finish();
             }
             ledNum = arguments.getInt("button");
         }
+
         Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
         ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields, eyes);
         spinnerEyes.setAdapter(adapterSpinnerEyes);
+
         Spinner spinnerModes = (Spinner) findViewById(R.id.spinner_mode);
         ArrayAdapter<String> adapterSpinnerModes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields, modes);
         spinnerModes.setAdapter(adapterSpinnerModes);
@@ -47,8 +50,10 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        if (ledNum == 12)
+        if (ledNum == 12) {
+            spinnerEyes.setEnabled(false);
             toolbar.setTitle("CAT_ALL");
+        }
         else
             toolbar.setTitle("CAT_" + ledNum);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
