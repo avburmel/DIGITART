@@ -73,6 +73,8 @@ public class BluetoothPeer {
 
     public void write(Context context, String message) {
         //String testMsg = "DIGITART # 1 # SETTINGS # num 0: smooth 1: color 255: period 400: TSStart 0: TSEnd 400";
+        if (socket == null || !socket.isConnected())
+            return;
         try {
            // output.write(testMsg.getBytes(StandardCharsets.US_ASCII));
             output.write(message.getBytes(StandardCharsets.US_ASCII));
@@ -83,6 +85,8 @@ public class BluetoothPeer {
 
     public void read(Context context) {
         byte[] buffer = new byte[1024];
+        if (socket == null || !socket.isConnected())
+            return;
         try {
             int numBytes = input.read(buffer);
             String s = new String(buffer, StandardCharsets.US_ASCII);
@@ -93,6 +97,8 @@ public class BluetoothPeer {
     }
 
     public void close() {
+        if (socket == null || !socket.isConnected())
+            return;
         try {
             socket.close();
         } catch (IOException e) {

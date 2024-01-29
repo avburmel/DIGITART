@@ -41,7 +41,7 @@ static protocol_ret ProtocolParseDataCommand(char* data, commands_t commandCode)
   //DIGITART # 1 # SETTINGS # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
   //DIGITART # 1 # SETTINGS_FOR_CAT # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
   //DIGITART # 1 # SETTINGS_FOR_ALL # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
-  //DIGITART # 1 # SETTINGS_BRIGHT # bright 128
+  //DIGITART # 1 # BRIGHT # bright 128
   //DIGITART # 1 # SAVE # 
   
   ledSettings config;

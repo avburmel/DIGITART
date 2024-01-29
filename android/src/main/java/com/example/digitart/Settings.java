@@ -92,7 +92,7 @@ public class Settings {
         return msg;
     }
 
-    public String createSettingsSaveMessage() {
+    public String createSaveMessage() {
         //"DIGITART # 1 # SAVE # "
         String msg = "DIGITART # 1 # SAVE # \0";
         return msg;
@@ -121,6 +121,13 @@ public class Settings {
         String start = Integer.toString(this.TSStart);
         String end = Integer.toString(this.TSEnd);
         msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end + '\0';
+        return msg;
+    }
+
+    public String createBrightMessage(int bright) {
+        //DIGITART # 1 # BRIGHT # bright 128
+        String msg = "DIGITART # 1 # BRIGHT # bright ";
+        msg += Integer.toString(2 * bright) + '\0';
         return msg;
     }
 }
