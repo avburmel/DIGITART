@@ -41,28 +41,93 @@ static protocol_ret ProtocolParseDataCommand(char* data, commands_t commandCode)
   //DIGITART # 1 # SETTINGS # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
   //DIGITART # 1 # SETTINGS_FOR_CAT # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
   //DIGITART # 1 # SETTINGS_FOR_ALL # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
-  //DIGITART # 1 # BRIGHT # bright 128
+  //DIGITART # 1 # SETTINGS_BRIGHT # bright 128
   //DIGITART # 1 # SAVE # 
+  //DIGITART # 1 # SYSTEM_TIME # sec 0: min 0: hour 0
+  //DIGITART # 1 # TIME # sec 0: min 0: hour 19: sec 0: min 0: hour 22: on 1:
   
   ledSettings config;
   int temp, ledPos;
+  const char* time[7] = {"sec ", "min ", "hour ", "sec ", "min ", "hour ", "on"};
   const char* field[6] = {"num ", "smooth ", "color ", "period ", "TSStart ", "TSEnd "};
-  int fieldVal[6];
+  int fieldVal[7];
 
   if (memcmp(data, PROTOCOL_SEPARATOR_EXT, sizeof(PROTOCOL_SEPARATOR_EXT) - 1) != 0)
     return PROTOCOL_ERR_FORMAT;
   data += sizeof(PROTOCOL_SEPARATOR_EXT) - 1;
 
-  if (commandCode == SAVE)
+  if (commandCode == SYSTEM_TIME)
+  {
+    for (int i = 0; i < 3; i++)
+    {
+      temp = strlen(time[i]);
+      if (memcmp(data, time[i], temp) != 0)
+        return PROTOCOL_ERR_DATA;
+      data += temp;
+      temp = ProtocolGetNumber(data, &fieldVal[i]);
+      if (temp == 0)
+        return PROTOCOL_ERR_DATA;
+      data += temp;
+      if (i < 2)
+      {
+        if (memcmp(data, PROTOCOL_SEPARATOR_INT, sizeof(PROTOCOL_SEPARATOR_INT) - 1) != 0)
+          return PROTOCOL_ERR_DATA;
+        data += sizeof(PROTOCOL_SEPARATOR_INT) - 1;
+      }
+    }
+    rtcSet(fieldVal[0], fieldVal[1], fieldVal[2]);
+    return PROTOCOL_OK;
+  }
+  else if (commandCode == TIME)
+  {
+    for (int i = 0; i < 7; i++)
+    {
+      temp = strlen(time[i]);
+      if (memcmp(data, time[i], temp) != 0)
+        return PROTOCOL_ERR_DATA;
+      data += temp;
+      temp = ProtocolGetNumber(data, &fieldVal[i]);
+      if (temp == 0)
+        return PROTOCOL_ERR_DATA;
+      data += temp;
+      if (i < 6)
+      {
+        if (memcmp(data, PROTOCOL_SEPARATOR_INT, sizeof(PROTOCOL_SEPARATOR_INT) - 1) != 0)
+          return PROTOCOL_ERR_DATA;
+        data += sizeof(PROTOCOL_SEPARATOR_INT) - 1;
+      }
+    }
+    Time time;
+    time.timeFrom.sec = fieldVal[0];
+    time.timeFrom.min = fieldVal[1];
+    time.timeFrom.hour = fieldVal[2];
+    time.timeTo.sec = fieldVal[3];
+    time.timeTo.min = fieldVal[4];
+    time.timeTo.hour = fieldVal[5];
+    time.isTimeMode = fieldVal[6];
+    settingsTimeSet(&time);
+    ledsSettingsUpdate();
+    return PROTOCOL_OK;
+  }
+  else if (commandCode == SAVE)
   {
     settingsSave();
     return PROTOCOL_OK;
   }
   else if (commandCode == BRIGHT)
   {
-    uint8_t bright;
-    temp = ProtocolGetNumber(data, (int *)(&bright));
-    ledsSetBright(bright);
+    int brightVal;
+    const char * bright = "bright ";
+    temp = strlen("bright ");
+    if (memcmp(data, bright, temp) != 0)
+        return PROTOCOL_ERR_DATA;
+    data += temp;
+    temp = ProtocolGetNumber(data, &brightVal);
+    if (temp == 0)
+      return PROTOCOL_ERR_DATA;
+    settingsBrightSet(brightVal);
+    ledsSettingsUpdate();
+    ledsSetBright(brightVal);
     return PROTOCOL_OK;
   }
   else if ((commandCode >= SETTINGS_FOR_ALL) && (commandCode <= SETTINGS))
@@ -125,6 +190,10 @@ static protocol_ret ProtocolParseData(char* data)
     return ProtocolParseDataCommand(data + sizeof(PROTOCOL_COMMAND_BRIGHT) - 1, BRIGHT);
   else if (memcmp(data, PROTOCOL_COMMAND_SAVE, sizeof(PROTOCOL_COMMAND_SAVE) - 1) == 0)
     return ProtocolParseDataCommand(data + sizeof(PROTOCOL_COMMAND_SAVE) - 1, SAVE);
+  else if (memcmp(data, PROTOCOL_COMMAND_SYSTEM_TIME, sizeof(PROTOCOL_COMMAND_SYSTEM_TIME) - 1) == 0)
+    return ProtocolParseDataCommand(data + sizeof(PROTOCOL_COMMAND_SYSTEM_TIME) - 1, SYSTEM_TIME);
+  else if (memcmp(data, PROTOCOL_COMMAND_TIME, sizeof(PROTOCOL_COMMAND_TIME) - 1) == 0)
+    return ProtocolParseDataCommand(data + sizeof(PROTOCOL_COMMAND_TIME) - 1, TIME);
   return PROTOCOL_ERR_FORMAT;
 }
 

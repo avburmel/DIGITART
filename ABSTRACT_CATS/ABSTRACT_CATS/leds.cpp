@@ -11,7 +11,7 @@ volatile uint32_t timerGlobalCntPrev = timerGlobalCnt - 1;
 
 Settings ledsProfile;
 
-uint32_t needToUpd = 0;
+uint32_t needToUpdStrip = 0;
 
 void IRAM_ATTR timerGlobalCB()
 {
@@ -41,15 +41,15 @@ static void ledsStateShow(void)
 void ledsSetBright(uint8_t bright)
 {
   strip.setBrightness(bright);
+  ledsClear();
+  ledsStateShow();
 }
 
 void ledsInit(void)
 {
   ledsBegin();
-  ledsClear();
   ledsSettingsUpdate();
   ledsSetBright(ledsProfile.bright);
-  ledsStateShow();
   timerGlobal = timerBegin(0, 8000, true);
   timerAttachInterrupt(timerGlobal, &timerGlobalCB, true);
   timerAlarmWrite(timerGlobal, 100, true);
@@ -60,11 +60,11 @@ static void ledsStateCalc(void)
 {
   uint32_t quant, middlePoint, duty, state;
   float brightK;
-  static uint32_t colorsPrev[CONFIG_LED_NUMBER] = {0};
+  uint32_t colorsPrev[CONFIG_LED_NUMBER] = {0};
 
   for(int i = 0; i < CONFIG_LED_NUMBER; i++)
   {
-    colorsPrev[i] = ((ledsProfile.config[i].color[0] << 16) | (ledsProfile.config[i].color[1] << 8) | ledsProfile.config[i].color[2]) & 0xFFFFFF;
+    colorsPrev[i] = strip.getPixelColor(i) & 0xFFFFFF;
     state = 0;
     quant = timerGlobalCnt % ledsProfile.config[i].period;
     if (ledsProfile.config[i].TSStart < ledsProfile.config[i].TSEnd)
@@ -147,7 +147,7 @@ static void ledsStateCalc(void)
     uint32_t color = strip.getPixelColor(i) & 0xFFFFFF;
     if (colorsPrev[i] != color)
     {
-      needToUpd = 1;
+      needToUpdStrip = 1;
       break;
     }     
   }
@@ -158,12 +158,11 @@ void ledsProcess(void)
   if (timerGlobalCnt != timerGlobalCntPrev)
   {
     ledsStateCalc();
-    if (needToUpd)
+    if (needToUpdStrip)
     {
       ledsStateShow();
-      needToUpd = 0;
+      needToUpdStrip = 0;
     }
-    
     timerGlobalCntPrev = timerGlobalCnt;
   }
 }
