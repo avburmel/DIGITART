@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        shouldShowRequestPermissionRationale(android.Manifest.permission.BLUETOOTH_CONNECT);
         ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, PackageManager.PERMISSION_GRANTED);
         BluetoothDeviceAdapter adapter = new BluetoothDeviceAdapter(this, stateClickListener);
         if (adapter.getItemCount() > 0) {

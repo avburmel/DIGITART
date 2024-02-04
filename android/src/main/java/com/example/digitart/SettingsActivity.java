@@ -18,7 +18,6 @@ public class SettingsActivity extends AppCompatActivity {
     private int ledNum;
 
     String[] eyes = {"BOTH EYES", "LEFT EYE", "RIGHT EYE"};
-    String[] bright = {"BRIGHT 100%", "BRIGHT 90%", "BRIGHT 80%", "BRIGHT 70%", "BRIGHT 60%", "BRIGHT 50%", "BRIGHT 40%", "BRIGHT 30%", "BRIGHT 20%", "BRIGHT 10%", "BRIGHT 0% - TURN OFF"};
     String[] modes = {"RISING/FALLING MODE", "FALLING/RISING MODE", "STABLE MODE", "RISING MODE", "FALLING MODE"};
 
     @Override
@@ -35,6 +34,9 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(this, "FAIL_TO_CONNECT", Toast.LENGTH_SHORT).show();
                     finish();
                 }
+                else {
+                    //TODO: Send time
+                }
             }
             ledNum = arguments.getInt("button");
         }
@@ -49,19 +51,12 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        String[] spinnerValues;
         if (ledNum == 12) {
-            spinnerValues = bright;
             toolbar.setTitle("CAT_ALL");
         }
         else {
-            spinnerValues = eyes;
-            toolbar.setTitle("CAT_" + ledNum);
+            toolbar.setTitle("CAT_" + Integer.toString(ledNum));
         }
-
-        Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
-        ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, spinnerValues);
-        spinnerEyes.setAdapter(adapterSpinnerEyes);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,6 +64,10 @@ public class SettingsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
+        ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, eyes);
+        spinnerEyes.setAdapter(adapterSpinnerEyes);
     }
 
     @Override
@@ -150,17 +149,17 @@ public class SettingsActivity extends AppCompatActivity {
             }
             this.peer.read(this);
         }
-        else if (ledNum == 12)
-        {
-            settings.setNum(23);
-            this.peer.write(this, settings.createSettingsForAllMessage());
-            int bright = getIntFromString(eye);
-            if (bright >= 0) {
-                String msg = settings.createBrightMessage(bright);
-                this.peer.write(this, msg);
-                this.peer.read(this);
-            }
-        }
+//        else if (ledNum == 12)
+//        {
+//            settings.setNum(23);
+//            this.peer.write(this, settings.createSettingsForAllMessage());
+//            int bright = getIntFromString(eye);
+//            if (bright >= 0) {
+//                String msg = settings.createBrightMessage(bright);
+//                this.peer.write(this, msg);
+//                this.peer.read(this);
+//            }
+//        }
         else if (ledNum == 13)
         {
 

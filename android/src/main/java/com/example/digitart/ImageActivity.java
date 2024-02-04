@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 public class ImageActivity extends AppCompatActivity {
     private BluetoothDevice device = null;
@@ -53,6 +52,12 @@ public class ImageActivity extends AppCompatActivity {
 
     public void onClickButton(View v) {
         openSettingsActivity(getResources().getResourceEntryName(v.getId()));
+    }
+
+    public void openCommonSettingsActivity(View v) {
+        Intent intent = new Intent(this, CommonSettingsActivity.class);
+        intent.putExtra(BluetoothDevice.class.getSimpleName(), device);
+        startActivity(intent);
     }
 
     public void openSettingsActivity(String id) {
