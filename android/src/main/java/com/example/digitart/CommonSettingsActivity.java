@@ -47,7 +47,7 @@ public class CommonSettingsActivity extends AppCompatActivity {
                     finish();
                 }
                 else {
-                    //TODO: Send time
+                    sendSystemTime();
                 }
             }
         }
@@ -123,8 +123,17 @@ public class CommonSettingsActivity extends AppCompatActivity {
     };
 
     public void sendSettings(View v) {
-        //sendBright();
-        sendTime();
+        String id = getResources().getResourceEntryName(v.getId());
+        switch(id) {
+            case "button_bright":
+                sendBright();
+                break;
+            case "button_time":
+                sendTime();
+                break;
+            default:
+                break;
+        }
     }
 
     private void sendBright() {
@@ -156,28 +165,40 @@ public class CommonSettingsActivity extends AppCompatActivity {
             result = (result << 8) + Integer.parseInt(value);
             start = matcher.end();
         }
-        return result;
+        return (result << 8);
     }
 
     private void sendTime() {
         Settings settings = new Settings();
-        int temp, hourFrom, minFrom, hourTo, minTo, on;
-        TextView timeFrom = findViewById(R.id.time_from);
-        TextView timeTo = findViewById(R.id.time_to);
+        int timeON = 0, timeOFF = 0, on = 0;
+        boolean needToSend = false;
         Switch timeModeOn = findViewById(R.id.switch_time_mode);
-        temp = getTimeFromString(timeFrom.getText().toString());
-        hourFrom = (temp >> 8) & 0xFF;
-        minFrom = temp & 0xFF;
-        temp = getTimeFromString(timeTo.getText().toString());
-        hourTo = (temp >> 8) & 0xFF;
-        minTo = temp & 0xFF;
-        if (timeModeOn.isChecked())
-            on = 1;
-        else
+        if (timeModeOn.isChecked()) {
+            TextView timeFrom = findViewById(R.id.time_from);
+            TextView timeTo = findViewById(R.id.time_to);
+            String inputFrom = timeFrom.getText().toString();
+            String inputTo = timeTo.getText().toString();
+            if ((inputFrom.length() == 5) && (inputTo.length() == 5)) {
+                timeON = getTimeFromString(inputFrom);
+                timeOFF = getTimeFromString(inputTo);
+                on = 1;
+                needToSend = true;
+            }
+            else {
+                Toast.makeText(this, "SET TIME PARAMETERS BEFORE SENDING", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            timeON = 0;
+            timeOFF = 0;
             on = 0;
-        String msg = settings.createTimeMessage(hourFrom, minFrom, hourTo, minTo, on);
-        this.peer.write(this, msg);
-        this.peer.read(this);
+            needToSend = true;
+        }
+        if (needToSend) {
+            String msg = settings.createTimeMessage(timeON, timeOFF, on);
+            this.peer.write(this, msg);
+            this.peer.read(this);
+        }
     }
 
     public void saveSettings(View v) {

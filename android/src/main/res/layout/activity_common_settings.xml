@@ -47,12 +47,26 @@
             android:max="10"
             android:progress="3" />
 
+        <Button
+            android:id="@+id/button_bright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seek_bar_bright"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:fontFamily="casual"
+            android:onClick="sendSettings"
+            android:text="SEND BRIGHT"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/text_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/seek_bar_bright"
+            android:layout_below="@id/button_bright"
             android:layout_marginTop="48dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -66,7 +80,7 @@
             android:id="@+id/switch_time_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/seek_bar_bright"
+            android:layout_below="@id/button_bright"
             android:scaleX="1.2"
             android:scaleY="1.2"
             android:layout_alignParentRight="true"
@@ -74,13 +88,13 @@
             android:layout_marginRight="16dp" />
 
         <RelativeLayout
+            android:id="@+id/relative_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/switch_time_mode"
             android:layout_marginTop="4dp"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="#7FC0C0C0" >
+            android:layout_marginEnd="16dp" >
 
             <TextView
                 android:id="@+id/text_time_from"
@@ -89,10 +103,10 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignTop="@+id/time_from"
                 android:layout_marginTop="4dp"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginRight="4dp"
                 android:fontFamily="casual"
-                android:text="TIME FROM:"
+                android:text="TIME ON:"
                 android:textColor="#FF6750A4"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -101,12 +115,12 @@
                 android:id="@+id/text_time_to"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/time_to"
+                android:layout_alignTop="@+id/time_to"
                 android:layout_marginTop="4dp"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginRight="4dp"
                 android:fontFamily="casual"
-                android:text="TIME TO:"
+                android:text="TIME OFF:"
                 android:textColor="#FF6750A4"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -118,7 +132,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="16dp"
                 android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginBottom="4dp"
                 android:fontFamily="casual"
                 android:hint="HH:MM"
@@ -136,7 +150,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginRight="16dp"
                 android:fontFamily="casual"
                 android:hint="HH:MM"
                 android:onClick="setTime"
@@ -147,16 +161,16 @@
         </RelativeLayout>
 
         <Button
-            android:id="@+id/button_send"
+            android:id="@+id/button_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/button_save"
-            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/relative_time"
+            android:layout_marginTop="24dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:fontFamily="casual"
             android:onClick="sendSettings"
-            android:text="SEND"
+            android:text="SEND TIME SETTINGS"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -165,7 +179,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="8dp"

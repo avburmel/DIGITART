@@ -24,7 +24,6 @@ struct Settings {
   ledSettings config[CONFIG_LED_NUMBER];
   uint8_t     bright;
   Time        time;
-  uint8_t     timeMode;
   uint16_t    crc;
 };
 

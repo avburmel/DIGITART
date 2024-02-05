@@ -43,20 +43,33 @@ static protocol_ret ProtocolParseDataCommand(char* data, commands_t commandCode)
   //DIGITART # 1 # SETTINGS_FOR_ALL # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
   //DIGITART # 1 # SETTINGS_BRIGHT # bright 128
   //DIGITART # 1 # SAVE # 
-  //DIGITART # 1 # SYSTEM_TIME # sec 0: min 0: hour 0
-  //DIGITART # 1 # TIME # sec 0: min 0: hour 19: sec 0: min 0: hour 22: on 1
+  //DIGITART # 1 # SYSTEM_TIME # time 0
+  //DIGITART # 1 # TIME # time 0: time 50 on 1
   
   ledSettings config;
   int temp, ledPos;
-  const char* time[7] = {"sec ", "min ", "hour ", "sec ", "min ", "hour ", "on "};
+  const char* time[7] = {"time ", "time ", "on "};
   const char* field[6] = {"num ", "smooth ", "color ", "period ", "TSStart ", "TSEnd "};
-  int fieldVal[7];
+  int fieldVal[6];
 
   if (memcmp(data, PROTOCOL_SEPARATOR_EXT, sizeof(PROTOCOL_SEPARATOR_EXT) - 1) != 0)
     return PROTOCOL_ERR_FORMAT;
   data += sizeof(PROTOCOL_SEPARATOR_EXT) - 1;
 
   if (commandCode == SYSTEM_TIME)
+  {
+    temp = strlen(time[0]);
+    if (memcmp(data, time[0], temp) != 0)
+      return PROTOCOL_ERR_DATA;
+    data += temp;
+    temp = ProtocolGetNumber(data, &fieldVal[0]);
+    if (temp == 0)
+      return PROTOCOL_ERR_DATA;
+    data += temp;
+    rtcSet(fieldVal[0]);
+    return PROTOCOL_OK;
+  }
+  else if (commandCode == TIME)
   {
     for (int i = 0; i < 3; i++)
     {
@@ -75,36 +88,14 @@ static protocol_ret ProtocolParseDataCommand(char* data, commands_t commandCode)
         data += sizeof(PROTOCOL_SEPARATOR_INT) - 1;
       }
     }
-    rtcSet(fieldVal[0], fieldVal[1], fieldVal[2]);
-    return PROTOCOL_OK;
-  }
-  else if (commandCode == TIME)
-  {
-    for (int i = 0; i < 7; i++)
-    {
-      temp = strlen(time[i]);
-      if (memcmp(data, time[i], temp) != 0)
-        return PROTOCOL_ERR_DATA;
-      data += temp;
-      temp = ProtocolGetNumber(data, &fieldVal[i]);
-      if (temp == 0)
-        return PROTOCOL_ERR_DATA;
-      data += temp;
-      if (i < 6)
-      {
-        if (memcmp(data, PROTOCOL_SEPARATOR_INT, sizeof(PROTOCOL_SEPARATOR_INT) - 1) != 0)
-          return PROTOCOL_ERR_DATA;
-        data += sizeof(PROTOCOL_SEPARATOR_INT) - 1;
-      }
-    }
     Time time;
-    time.timeFrom.sec = fieldVal[0];
-    time.timeFrom.min = fieldVal[1];
-    time.timeFrom.hour = fieldVal[2];
-    time.timeTo.sec = fieldVal[3];
-    time.timeTo.min = fieldVal[4];
-    time.timeTo.hour = fieldVal[5];
-    time.isTimeMode = fieldVal[6];
+    time.timeFrom.sec = fieldVal[0] & 0xFF;
+    time.timeFrom.min = (fieldVal[0] >> 8) & 0xFF;
+    time.timeFrom.hour = (fieldVal[0] >> 16) & 0xFF;
+    time.timeTo.sec = fieldVal[1] & 0xFF;
+    time.timeTo.min = (fieldVal[1] >> 8) & 0xFF;
+    time.timeTo.hour = (fieldVal[1] >> 16) & 0xFF;
+    time.isTimeMode = fieldVal[2];
     settingsTimeSet(&time);
     ledsSettingsUpdate();
     return PROTOCOL_OK;
@@ -127,7 +118,6 @@ static protocol_ret ProtocolParseDataCommand(char* data, commands_t commandCode)
       return PROTOCOL_ERR_DATA;
     settingsBrightSet(brightVal);
     ledsSettingsUpdate();
-    ledsSetBright(brightVal);
     return PROTOCOL_OK;
   }
   else if ((commandCode >= SETTINGS_FOR_ALL) && (commandCode <= SETTINGS))

@@ -125,31 +125,29 @@ public class Settings {
     }
 
     public String createBrightMessage(int bright) {
-        //DIGITART # 1 # BRIGHT # bright 128
+        //DIGITART # 1 # BRIGHT # bright 100
         String msg = "DIGITART # 1 # BRIGHT # bright ";
-        msg += Integer.toString(2 * bright) + '\0';
+        if (bright != 0)
+            bright = (int) (bright * 1.28 + 22);
+        msg += Integer.toString(bright) + '\0';
         return msg;
     }
 
     public String createSystemTimeMessage(int hour, int min, int sec) {
-        //DIGITART # 1 # SYSTEM_TIME # sec 0: min 0: hour 0
-        String msg = "DIGITART # 1 # SYSTEM_TIME # ";
-        String strHour = Integer.toString(hour);
-        String strMin = Integer.toString(min);
-        String strSec = Integer.toString(sec);
-        msg = msg + "sec " + strSec + ": min " + strMin + ": hour " + strHour + '\0';
+        //DIGITART # 1 # SYSTEM_TIME # time 0
+        String msg = "DIGITART # 1 # SYSTEM_TIME # time ";
+        String strTime = Integer.toString((hour << 16) | (min << 8) | (sec));
+        msg = msg + strTime + '\0';
         return msg;
     }
 
-    public String createTimeMessage(int hourFrom, int minFrom, int hourTo, int minTo, int on) {
-        //DIGITART # 1 # TIME # sec 0: min 0: hour 19: sec 0: min 0: hour 22: on 1
+    public String createTimeMessage(int timeFrom, int timeTo, int on) {
+        //DIGITART # 1 # TIME # time 0: time 50: on 1
         String msg = "DIGITART # 1 # TIME # ";
-        String strHourFrom = Integer.toString(hourFrom);
-        String strMinFrom = Integer.toString(minFrom);
-        String strHourTo = Integer.toString(hourTo);
-        String strMinTo = Integer.toString(minTo);
+        String strTimeFrom = Integer.toString(timeFrom);
+        String strTimeTo = Integer.toString(timeTo);
         String strOn = Integer.toString(on);
-        msg = msg + "sec 0" + ": min " + strMinFrom + ": hour " + strHourFrom + ": sec 0" + ": min " + strMinTo + ": hour " + strHourTo + ": on " + strOn + '\0';
+        msg = msg + "time " + strTimeFrom + ": time " + strTimeTo + ": on " + strOn + '\0';
         return msg;
     }
 }

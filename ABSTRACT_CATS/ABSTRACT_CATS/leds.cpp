@@ -11,8 +11,6 @@ volatile uint32_t timerGlobalCntPrev = timerGlobalCnt - 1;
 
 Settings ledsProfile;
 
-uint32_t needToUpdStrip = 0;
-
 void IRAM_ATTR timerGlobalCB()
 {
   timerGlobalCnt++;
@@ -49,14 +47,14 @@ void ledsInit(void)
 {
   ledsBegin();
   ledsSettingsUpdate();
-  ledsSetBright(ledsProfile.bright);
+  ledsSetBright(0);
   timerGlobal = timerBegin(0, 8000, true);
   timerAttachInterrupt(timerGlobal, &timerGlobalCB, true);
   timerAlarmWrite(timerGlobal, 100, true);
   timerAlarmEnable(timerGlobal);
 }
 
-static void ledsStateCalc(void)
+static int ledsStateCalc(void)
 {
   uint32_t quant, middlePoint, duty, state;
   float brightK;
@@ -147,22 +145,98 @@ static void ledsStateCalc(void)
     uint32_t color = strip.getPixelColor(i) & 0xFFFFFF;
     if (colorsPrev[i] != color)
     {
-      needToUpdStrip = 1;
+      return 1;
       break;
     }     
   }
+  return 0;
+}
+
+static uint8_t ledsBrightController(void)
+{
+  static uint8_t bright = 0;
+  if (ledsProfile.time.isTimeMode == 0)
+  {
+    if (bright != ledsProfile.bright)
+    {
+      bright = ledsProfile.bright;
+      ledsSetBright(bright);
+    }
+  }
+  else
+  {
+    RTC_Time time;
+    rtcGet(&time);
+    if (rtcTimeCmp(&ledsProfile.time.timeFrom, &ledsProfile.time.timeTo) == 1)
+    {
+      if ((rtcTimeCmp(&ledsProfile.time.timeFrom, &time)) && rtcTimeCmp(&time, &ledsProfile.time.timeTo))
+      {
+        if (bright != ledsProfile.bright)
+        {
+          bright = ledsProfile.bright;
+          ledsSetBright(bright);
+        }
+      }
+      else
+      {
+        if (bright != 0)
+        {
+          bright = 0;
+          ledsSetBright(bright);
+        }
+      }
+    }
+    else
+    {
+      if ((rtcTimeCmp(&ledsProfile.time.timeTo, &time) && rtcTimeCmp(&ledsProfile.time.timeFrom, &time)) || \
+          (rtcTimeCmp(&time, &ledsProfile.time.timeTo) && rtcTimeCmp(&time, &ledsProfile.time.timeFrom)))
+      {
+        if (bright != ledsProfile.bright)
+        {
+          bright = ledsProfile.bright;
+          ledsSetBright(bright);
+        }
+      }
+      else
+      {
+        if (bright != 0)
+        {
+          bright = 0;
+          ledsSetBright(bright);
+        }
+      }
+    }
+  }   
+  return bright;
+}
+
+static int ledsGetPermissionToWork(void)
+{
+  static int state = 1;
+  uint8_t bright = ledsBrightController();
+  if (state)
+  {
+    if (bright == 0)
+      state = 0;
+  }
+  else
+  {
+    if (bright != 0)
+      state = 1;
+  }
+  return state;
 }
 
 void ledsProcess(void)
 { 
   if (timerGlobalCnt != timerGlobalCntPrev)
   {
-    ledsStateCalc();
-    if (needToUpdStrip)
+    if (ledsGetPermissionToWork())
     {
-      ledsStateShow();
-      needToUpdStrip = 0;
+      if (ledsStateCalc())
+        ledsStateShow();
+      timerGlobalCntPrev = timerGlobalCnt;
     }
-    timerGlobalCntPrev = timerGlobalCnt;
   }
+    
 }

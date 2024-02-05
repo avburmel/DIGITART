@@ -169,16 +169,4 @@ public class SettingsActivity extends AppCompatActivity {
         this.peer.read(this);
     }
 
-//    private int getIntFromString(String str) {
-//        Pattern pattern = Pattern.compile("\\d+");
-//        Matcher matcher = pattern.matcher(str);
-//        int start = 0;
-//        while (matcher.find(start)) {
-//            String value = str.substring(matcher.start(), matcher.end());
-//            int result = Integer.parseInt(value);
-//            start = matcher.end();
-//            return result;
-//        }
-//        return -1;
-//    }
 }
