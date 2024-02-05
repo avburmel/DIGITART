@@ -51,7 +51,13 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
+        ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, eyes);
+        spinnerEyes.setAdapter(adapterSpinnerEyes);
+
         if (ledNum == 12) {
+            spinnerEyes.setEnabled(false);
+            spinnerEyes.setBackgroundColor(0xF0C0C0C0);
             toolbar.setTitle("CAT_ALL");
         }
         else {
@@ -64,10 +70,6 @@ public class SettingsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
-        ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, eyes);
-        spinnerEyes.setAdapter(adapterSpinnerEyes);
     }
 
     @Override
@@ -149,17 +151,12 @@ public class SettingsActivity extends AppCompatActivity {
             }
             this.peer.read(this);
         }
-//        else if (ledNum == 12)
-//        {
-//            settings.setNum(23);
-//            this.peer.write(this, settings.createSettingsForAllMessage());
-//            int bright = getIntFromString(eye);
-//            if (bright >= 0) {
-//                String msg = settings.createBrightMessage(bright);
-//                this.peer.write(this, msg);
-//                this.peer.read(this);
-//            }
-//        }
+        else if (ledNum == 12)
+        {
+            settings.setNum(23);
+            this.peer.write(this, settings.createSettingsForAllMessage());
+            this.peer.read(this);
+        }
         else if (ledNum == 13)
         {
 
@@ -172,16 +169,16 @@ public class SettingsActivity extends AppCompatActivity {
         this.peer.read(this);
     }
 
-    private int getIntFromString(String str) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(str);
-        int start = 0;
-        while (matcher.find(start)) {
-            String value = str.substring(matcher.start(), matcher.end());
-            int result = Integer.parseInt(value);
-            start = matcher.end();
-            return result;
-        }
-        return -1;
-    }
+//    private int getIntFromString(String str) {
+//        Pattern pattern = Pattern.compile("\\d+");
+//        Matcher matcher = pattern.matcher(str);
+//        int start = 0;
+//        while (matcher.find(start)) {
+//            String value = str.substring(matcher.start(), matcher.end());
+//            int result = Integer.parseInt(value);
+//            start = matcher.end();
+//            return result;
+//        }
+//        return -1;
+//    }
 }

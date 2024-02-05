@@ -130,4 +130,26 @@ public class Settings {
         msg += Integer.toString(2 * bright) + '\0';
         return msg;
     }
+
+    public String createSystemTimeMessage(int hour, int min, int sec) {
+        //DIGITART # 1 # SYSTEM_TIME # sec 0: min 0: hour 0
+        String msg = "DIGITART # 1 # SYSTEM_TIME # ";
+        String strHour = Integer.toString(hour);
+        String strMin = Integer.toString(min);
+        String strSec = Integer.toString(sec);
+        msg = msg + "sec " + strSec + ": min " + strMin + ": hour " + strHour + '\0';
+        return msg;
+    }
+
+    public String createTimeMessage(int hourFrom, int minFrom, int hourTo, int minTo, int on) {
+        //DIGITART # 1 # TIME # sec 0: min 0: hour 19: sec 0: min 0: hour 22: on 1
+        String msg = "DIGITART # 1 # TIME # ";
+        String strHourFrom = Integer.toString(hourFrom);
+        String strMinFrom = Integer.toString(minFrom);
+        String strHourTo = Integer.toString(hourTo);
+        String strMinTo = Integer.toString(minTo);
+        String strOn = Integer.toString(on);
+        msg = msg + "sec 0" + ": min " + strMinFrom + ": hour " + strHourFrom + ": sec 0" + ": min " + strMinTo + ": hour " + strHourTo + ": on " + strOn + '\0';
+        return msg;
+    }
 }

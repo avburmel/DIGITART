@@ -46,12 +46,6 @@ public class BluetoothPeer {
                         socket.connect();
                     } catch (IOException connectException) {
                         return  false;
-//                        try {
-//                            socket.close();
-//                        } catch (IOException closeException) {
-//
-//                        }
-//                        return false;
                     }
                 }
             } catch (IOException e) {

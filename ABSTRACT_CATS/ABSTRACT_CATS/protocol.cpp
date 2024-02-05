@@ -44,11 +44,11 @@ static protocol_ret ProtocolParseDataCommand(char* data, commands_t commandCode)
   //DIGITART # 1 # SETTINGS_BRIGHT # bright 128
   //DIGITART # 1 # SAVE # 
   //DIGITART # 1 # SYSTEM_TIME # sec 0: min 0: hour 0
-  //DIGITART # 1 # TIME # sec 0: min 0: hour 19: sec 0: min 0: hour 22: on 1:
+  //DIGITART # 1 # TIME # sec 0: min 0: hour 19: sec 0: min 0: hour 22: on 1
   
   ledSettings config;
   int temp, ledPos;
-  const char* time[7] = {"sec ", "min ", "hour ", "sec ", "min ", "hour ", "on"};
+  const char* time[7] = {"sec ", "min ", "hour ", "sec ", "min ", "hour ", "on "};
   const char* field[6] = {"num ", "smooth ", "color ", "period ", "TSStart ", "TSEnd "};
   int fieldVal[7];
 

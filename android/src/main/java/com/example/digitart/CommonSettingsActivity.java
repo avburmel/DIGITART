@@ -6,20 +6,21 @@ import androidx.appcompat.widget.Toolbar;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommonSettingsActivity extends AppCompatActivity {
 
@@ -120,4 +121,69 @@ public class CommonSettingsActivity extends AppCompatActivity {
             setInitialDateTime(1);
         }
     };
+
+    public void sendSettings(View v) {
+        //sendBright();
+        sendTime();
+    }
+
+    private void sendBright() {
+        Settings settings = new Settings();
+        SeekBar brightBar = findViewById(R.id.seek_bar_bright);
+        String msg = settings.createBrightMessage(brightBar.getProgress() * 10);
+        this.peer.write(this, msg);
+        this.peer.read(this);
+    }
+
+    private void sendSystemTime() {
+        Settings settings = new Settings();
+        int hour, min, sec;
+        hour = Calendar.getInstance().getTime().getHours();
+        min = Calendar.getInstance().getTime().getMinutes();
+        sec = Calendar.getInstance().getTime().getSeconds();
+        String msg = settings.createSystemTimeMessage(hour, min, sec);
+        this.peer.write(this, msg);
+        this.peer.read(this);
+    }
+
+    private int getTimeFromString(String str) {
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(str);
+        int start = 0;
+        int result = 0;
+        while (matcher.find(start)) {
+            String value = str.substring(matcher.start(), matcher.end());
+            result = (result << 8) + Integer.parseInt(value);
+            start = matcher.end();
+        }
+        return result;
+    }
+
+    private void sendTime() {
+        Settings settings = new Settings();
+        int temp, hourFrom, minFrom, hourTo, minTo, on;
+        TextView timeFrom = findViewById(R.id.time_from);
+        TextView timeTo = findViewById(R.id.time_to);
+        Switch timeModeOn = findViewById(R.id.switch_time_mode);
+        temp = getTimeFromString(timeFrom.getText().toString());
+        hourFrom = (temp >> 8) & 0xFF;
+        minFrom = temp & 0xFF;
+        temp = getTimeFromString(timeTo.getText().toString());
+        hourTo = (temp >> 8) & 0xFF;
+        minTo = temp & 0xFF;
+        if (timeModeOn.isChecked())
+            on = 1;
+        else
+            on = 0;
+        String msg = settings.createTimeMessage(hourFrom, minFrom, hourTo, minTo, on);
+        this.peer.write(this, msg);
+        this.peer.read(this);
+    }
+
+    public void saveSettings(View v) {
+        Settings settings = new Settings();
+        this.peer.write(this, settings.createSaveMessage());
+        this.peer.read(this);
+    }
+
 }

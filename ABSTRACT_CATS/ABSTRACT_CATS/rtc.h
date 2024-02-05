@@ -12,4 +12,5 @@ struct RTC_Time {
 
 void rtcSet(uint8_t s, uint8_t min, uint8_t hour);
 void rtcGet(RTC_Time *time);
+
 #endif
