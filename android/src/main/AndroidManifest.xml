@@ -22,6 +22,9 @@
         android:theme="@style/Theme.DIGITART"
         tools:targetApi="31">
         <activity
+            android:name=".PresetsActivity"
+            android:exported="false" />
+        <activity
             android:name=".CommonSettingsActivity"
             android:exported="false" />
         <activity

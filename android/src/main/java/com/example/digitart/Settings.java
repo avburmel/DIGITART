@@ -128,7 +128,7 @@ public class Settings {
         //DIGITART # 1 # BRIGHT # bright 100
         String msg = "DIGITART # 1 # BRIGHT # bright ";
         if (bright != 0)
-            bright = (int) (bright * 1.28 + 22);
+            bright = (int) (bright * 1.28 + 10);
         msg += Integer.toString(bright) + '\0';
         return msg;
     }
