@@ -60,13 +60,16 @@ public class ImageActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openPresetsActivity(View v) {
+        Intent intent = new Intent(this, PresetsActivity.class);
+        intent.putExtra(BluetoothDevice.class.getSimpleName(), device);
+        startActivity(intent);
+    }
+
     public void openSettingsActivity(String id) {
         int arg = 0xFFFF;
         MediaPlayer.create(this, R.raw.meow).start();
         switch(id) {
-            case "button_presets":
-                arg = 13;
-                break;
             case "button_all":
                 arg = 12;
                 break;

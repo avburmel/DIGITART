@@ -42,10 +42,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/button1"
-            android:layout_toLeftOf="@id/button1"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
+            android:layout_toLeftOf="@id/button1"
             android:fontFamily="casual"
+            android:onClick="openPresetsActivity"
             android:text="PRESETS"
             android:textSize="20sp"
             android:textStyle="bold" />
