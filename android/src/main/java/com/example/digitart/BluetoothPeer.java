@@ -95,7 +95,7 @@ public class BluetoothPeer {
     }
 
     public void close() {
-        if (socket == null || !socket.isConnected())
+        if ((socket == null) || (!socket.isConnected()))
             return;
         try {
             socket.close();

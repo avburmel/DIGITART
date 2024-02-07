@@ -50,6 +50,12 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                onBackPressed();
+            }
+        });
 
         Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
         ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, eyes);
@@ -63,13 +69,6 @@ public class SettingsActivity extends AppCompatActivity {
         else {
             toolbar.setTitle("CAT_" + Integer.toString(ledNum));
         }
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                onBackPressed();
-            }
-        });
     }
 
     @Override
