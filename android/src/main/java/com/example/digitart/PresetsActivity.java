@@ -66,6 +66,7 @@ public class PresetsActivity extends AppCompatActivity {
         presets.add(new Presets ("VAMPIRE", 0xFFFF0000));
         presets.add(new Presets ("HALLOWEEN", 0xFFFFA500));
         presets.add(new Presets ("GHOST", 0xFF30D5C8));
+        presets.add(new Presets ("TICKER", 0x996750A4));
         presets.add(new Presets ("RANDOM", 0xFF000000));
     }
 
