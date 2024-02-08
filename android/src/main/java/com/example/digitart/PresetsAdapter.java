@@ -28,8 +28,8 @@ public class PresetsAdapter extends RecyclerView.Adapter<PresetsAdapter.ViewHold
     @Override
     public void onBindViewHolder(PresetsAdapter.ViewHolder holder, int position) {
         Presets state = presets.get(position);
-        holder.imgView.setImageResource(state.getImgResource());
         holder.nameView.setText(state.getName());
+        holder.nameView.setTextColor(state.getColor());
     }
 
     @Override
@@ -38,11 +38,9 @@ public class PresetsAdapter extends RecyclerView.Adapter<PresetsAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        final ImageView imgView;
         final TextView nameView;
         ViewHolder(View view){
             super(view);
-            imgView = view.findViewById(R.id.img);
             nameView = view.findViewById(R.id.name);
         }
     }

@@ -56,6 +56,12 @@ public class SettingsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         Spinner spinnerEyes = (Spinner) findViewById(R.id.spinner_eye);
         ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, eyes);

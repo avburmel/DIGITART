@@ -64,6 +64,12 @@ public class CommonSettingsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override

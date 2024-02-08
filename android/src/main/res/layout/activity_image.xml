@@ -22,7 +22,9 @@
         android:layout_height="0dp"
         android:background="@drawable/cats_tree"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_image">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_image"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="16dp">
 
         <Button
             android:id="@+id/button_settings"
@@ -37,6 +39,13 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/crutch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="" />
+
         <Button
             android:id="@+id/button_presets"
             android:layout_width="match_parent"
@@ -44,7 +53,7 @@
             android:layout_above="@+id/button1"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_toLeftOf="@id/button1"
+            android:layout_toLeftOf="@id/crutch"
             android:fontFamily="casual"
             android:onClick="openPresetsActivity"
             android:text="PRESETS"
@@ -56,14 +65,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/button1"
-            android:layout_toRightOf="@id/button1"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
+            android:layout_toRightOf="@id/crutch"
             android:fontFamily="casual"
-            android:textStyle="bold"
             android:onClick="onClickButton"
+            android:text="ALL CATS"
             android:textSize="20sp"
-            android:text="ALL CATS" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button2"
@@ -73,53 +82,53 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_toEndOf="@id/button4"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="2"
             android:textSize="20sp"
-            android:text="2" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/button4"
+            android:layout_centerHorizontal="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_centerHorizontal="true"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="1"
             android:textSize="20sp"
-            android:text="1" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/button4"
-            android:layout_toStartOf="@id/button1"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:onClick="onClickButton"
+            android:layout_toStartOf="@id/button1"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="0"
             android:textSize="20sp"
-            android:text="0" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/button7"
-            android:layout_toStartOf="@id/button4"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:onClick="onClickButton"
+            android:layout_toStartOf="@id/button4"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="3"
             android:textSize="20sp"
-            android:text="3" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button4"
@@ -129,11 +138,11 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="4"
             android:textSize="20sp"
-            android:text="4" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button5"
@@ -143,11 +152,11 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_toEndOf="@+id/button4"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="5"
             android:textSize="20sp"
-            android:text="5" />
+            android:textStyle="bold" />
 
 
         <Button
@@ -158,11 +167,11 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="7"
             android:textSize="20sp"
-            android:text="7" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button6"
@@ -172,40 +181,40 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_toStartOf="@+id/button7"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="6"
             android:textSize="20sp"
-            android:text="6" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/button10"
-            android:layout_toEndOf="@id/button7"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:onClick="onClickButton"
+            android:layout_toEndOf="@id/button7"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="8"
             android:textSize="20sp"
-            android:text="8" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/button10"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="8dp"
-            android:onClick="onClickButton"
+            android:layout_toEndOf="@+id/button10"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="11"
             android:textSize="20sp"
-            android:text="11" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button10"
@@ -216,11 +225,11 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="8dp"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="10"
             android:textSize="20sp"
-            android:text="10" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/button9"
@@ -231,11 +240,11 @@
             android:layout_marginRight="4dp"
             android:layout_marginBottom="8dp"
             android:layout_toStartOf="@id/button10"
-            android:onClick="onClickButton"
             android:fontFamily="casual"
-            android:textStyle="bold"
+            android:onClick="onClickButton"
+            android:text="9"
             android:textSize="20sp"
-            android:text="9" />
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

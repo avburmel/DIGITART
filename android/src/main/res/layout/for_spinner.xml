@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="casual"
         android:textStyle="bold"
-        android:textColor="#FF6750A4"
+        android:textColor="?attr/colorPrimary"
         android:textSize="20sp"
         android:background="@android:color/transparent"
         android:layout_margin="8dp"/>

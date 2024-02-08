@@ -2,11 +2,11 @@ package com.example.digitart;
 
 public class Presets {
     private String name;
-    private int imgResource;
+    private int color;
 
-    public Presets(String name, int flag) {
-        this.name=name;
-        this.imgResource=flag;
+    public Presets(String name, int color) {
+        this.name = name;
+        this.color = color;
     }
 
     public String getName() {
@@ -17,11 +17,11 @@ public class Presets {
         this.name = name;
     }
 
-    public int getImgResource() {
-        return this.imgResource;
+    public int getColor() {
+        return this.color;
     }
 
-    public void setFlagResource(int imgResource) {
-        this.imgResource = imgResource;
+    public void setColor(int color) {
+        this.color = color;
     }
 }

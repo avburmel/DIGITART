@@ -50,14 +50,23 @@ public class PresetsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         setInitialData();
         RecyclerView recyclerView = findViewById(R.id.presets_list);
         PresetsAdapter adapter = new PresetsAdapter(this, presets);
         recyclerView.setAdapter(adapter);
     }
-    private void setInitialData(){
-        presets.add(new Presets ("CATS", R.drawable.cats_tree));
+    private void setInitialData() {
+        presets.add(new Presets ("VAMPIRE", 0xFFFF0000));
+        presets.add(new Presets ("HALLOWEEN", 0xFFFFA500));
+        presets.add(new Presets ("GHOST", 0xFF30D5C8));
+        presets.add(new Presets ("RANDOM", 0xFF000000));
     }
 
     @Override
