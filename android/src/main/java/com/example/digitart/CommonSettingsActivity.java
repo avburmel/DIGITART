@@ -149,18 +149,6 @@ public class CommonSettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void sendSystemTime() {
-        if (BTService != null) {
-            Settings settings = new Settings();
-            int hour, min, sec;
-            hour = Calendar.getInstance().getTime().getHours();
-            min = Calendar.getInstance().getTime().getMinutes();
-            sec = Calendar.getInstance().getTime().getSeconds();
-            String msg = settings.createSystemTimeMessage(hour, min, sec);
-            BTService.write(msg);
-        }
-    }
-
     private int getTimeFromString(String str) {
         Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(str);

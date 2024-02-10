@@ -13,7 +13,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 
+import java.util.Calendar;
+
 public class ImageActivity extends AppCompatActivity {
+
+    BluetoothDevice device = null;
     BluetoothConnectionService BTService = null;
     ServiceConnection sConn;
 
@@ -44,6 +48,7 @@ public class ImageActivity extends AppCompatActivity {
         sConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 BTService = ((BluetoothConnectionService.MyBinder) binder).getService();
+                connect();
             }
             public void onServiceDisconnected(ComponentName name) {
 
@@ -52,7 +57,7 @@ public class ImageActivity extends AppCompatActivity {
 
         Bundle arguments = getIntent().getExtras();
         if (arguments != null) {
-            BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
+            device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
             startService(device);
         }
     }
@@ -63,6 +68,12 @@ public class ImageActivity extends AppCompatActivity {
         stopService();
     }
 
+    private void connect() {
+        if ((BTService != null) && (device != null)) {
+            BTService.connect(device);
+            sendSystemTime();
+        }
+    }
     private void startService(BluetoothDevice device) {
         Intent intent = new Intent(this, BluetoothConnectionService.class);
         startService(intent.putExtra(BluetoothDevice.class.getSimpleName(), device));
@@ -139,6 +150,18 @@ public class ImageActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SettingsActivity.class);
             intent.putExtra("button", arg);
             startActivity(intent);
+        }
+    }
+
+    private void sendSystemTime() {
+        if (BTService != null) {
+            Settings settings = new Settings();
+            int hour, min, sec;
+            hour = Calendar.getInstance().getTime().getHours();
+            min = Calendar.getInstance().getTime().getMinutes();
+            sec = Calendar.getInstance().getTime().getSeconds();
+            String msg = settings.createSystemTimeMessage(hour, min, sec);
+            BTService.write(msg);
         }
     }
 }
