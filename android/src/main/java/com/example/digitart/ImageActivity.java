@@ -5,24 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 
 public class ImageActivity extends AppCompatActivity {
-    private BluetoothDevice device = null;
+    BluetoothConnectionService BTService = null;
+    ServiceConnection sConn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
-
-        Bundle arguments = getIntent().getExtras();
-
-        if (arguments != null) {
-            device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
-        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_image);
         setSupportActionBar(toolbar);
@@ -42,18 +40,39 @@ public class ImageActivity extends AppCompatActivity {
 
             }
         });
+
+        sConn = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                BTService = ((BluetoothConnectionService.MyBinder) binder).getService();
+            }
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+
+        Bundle arguments = getIntent().getExtras();
+        if (arguments != null) {
+            BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
+            startService(device);
+        }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelable(BluetoothDevice.class.getSimpleName(), device);
-        super.onSaveInstanceState(savedInstanceState);
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService();
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        device = savedInstanceState.getParcelable(BluetoothDevice.class.getSimpleName());
+    private void startService(BluetoothDevice device) {
+        Intent intent = new Intent(this, BluetoothConnectionService.class);
+        startService(intent.putExtra(BluetoothDevice.class.getSimpleName(), device));
+        bindService(intent, sConn, 0);
+    }
+
+    private void stopService() {
+        if (BTService != null)
+            BTService.close();
+        stopService(new Intent(this, BluetoothConnectionService.class));
     }
 
     public void onClickButton(View v) {
@@ -62,13 +81,11 @@ public class ImageActivity extends AppCompatActivity {
 
     public void openCommonSettingsActivity(View v) {
         Intent intent = new Intent(this, CommonSettingsActivity.class);
-        intent.putExtra(BluetoothDevice.class.getSimpleName(), device);
         startActivity(intent);
     }
 
     public void openPresetsActivity(View v) {
         Intent intent = new Intent(this, PresetsActivity.class);
-        intent.putExtra(BluetoothDevice.class.getSimpleName(), device);
         startActivity(intent);
     }
 
@@ -120,7 +137,6 @@ public class ImageActivity extends AppCompatActivity {
         }
         if (arg != 0xFFFF) {
             Intent intent = new Intent(this, SettingsActivity.class);
-            intent.putExtra(BluetoothDevice.class.getSimpleName(), device);
             intent.putExtra("button", arg);
             startActivity(intent);
         }

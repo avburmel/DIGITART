@@ -3,10 +3,13 @@ package com.example.digitart;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 
 import android.app.TimePickerDialog;
+import android.os.IBinder;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.SeekBar;
@@ -15,17 +18,14 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommonSettingsActivity extends AppCompatActivity {
 
-    private BluetoothDevice device = null;
-    private BluetoothPeer peer;
+    BluetoothConnectionService BTService = null;
+    ServiceConnection sConn;
     TextView timeFrom;
     TextView timeTo;
     Calendar dateAndTime = Calendar.getInstance();
@@ -36,21 +36,6 @@ public class CommonSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_common_settings);
         timeFrom = findViewById(R.id.time_from);
         timeTo = findViewById(R.id.time_to);
-
-        Bundle arguments = getIntent().getExtras();
-        if (arguments != null) {
-            BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
-            peer = new BluetoothPeer(device);
-            if (device != null) {
-                if (peer.connectBluetooth(this, peer.getDevice()) == false) {
-                    Toast.makeText(this, "FAIL_TO_CONNECT", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                else {
-                    sendSystemTime();
-                }
-            }
-        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_settings);
         setSupportActionBar(toolbar);
@@ -70,13 +55,26 @@ public class CommonSettingsActivity extends AppCompatActivity {
 
             }
         });
+
+        sConn = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                BTService = ((BluetoothConnectionService.MyBinder) binder).getService();
+            }
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        bindService();
+    }
+
+    private void bindService() {
+        Intent intent = new Intent(this, BluetoothConnectionService.class);
+        bindService(intent, sConn, 0);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (peer != null)
-            peer.close();
     }
 
     public void setTime(View v) {
@@ -143,22 +141,24 @@ public class CommonSettingsActivity extends AppCompatActivity {
     }
 
     private void sendBright() {
-        Settings settings = new Settings();
-        SeekBar brightBar = findViewById(R.id.seek_bar_bright);
-        String msg = settings.createBrightMessage(brightBar.getProgress() * 10);
-        this.peer.write(this, msg);
-        this.peer.read(this);
+        if (BTService != null) {
+            Settings settings = new Settings();
+            SeekBar brightBar = findViewById(R.id.seek_bar_bright);
+            String msg = settings.createBrightMessage(brightBar.getProgress() * 10);
+            BTService.write(msg);
+        }
     }
 
     private void sendSystemTime() {
-        Settings settings = new Settings();
-        int hour, min, sec;
-        hour = Calendar.getInstance().getTime().getHours();
-        min = Calendar.getInstance().getTime().getMinutes();
-        sec = Calendar.getInstance().getTime().getSeconds();
-        String msg = settings.createSystemTimeMessage(hour, min, sec);
-        this.peer.write(this, msg);
-        this.peer.read(this);
+        if (BTService != null) {
+            Settings settings = new Settings();
+            int hour, min, sec;
+            hour = Calendar.getInstance().getTime().getHours();
+            min = Calendar.getInstance().getTime().getMinutes();
+            sec = Calendar.getInstance().getTime().getSeconds();
+            String msg = settings.createSystemTimeMessage(hour, min, sec);
+            BTService.write(msg);
+        }
     }
 
     private int getTimeFromString(String str) {
@@ -200,17 +200,17 @@ public class CommonSettingsActivity extends AppCompatActivity {
             on = 0;
             needToSend = true;
         }
-        if (needToSend) {
+        if (needToSend && (BTService != null)) {
             String msg = settings.createTimeMessage(timeON, timeOFF, on);
-            this.peer.write(this, msg);
-            this.peer.read(this);
+            BTService.write(msg);
         }
     }
 
     public void saveSettings(View v) {
-        Settings settings = new Settings();
-        this.peer.write(this, settings.createSaveMessage());
-        this.peer.read(this);
+        if (BTService != null) {
+            Settings settings = new Settings();
+            BTService.write(settings.createSaveMessage());
+        }
     }
 
 }

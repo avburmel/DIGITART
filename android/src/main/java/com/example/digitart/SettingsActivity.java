@@ -2,8 +2,11 @@ package com.example.digitart;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -11,11 +14,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.regex.*;
-
 public class SettingsActivity extends AppCompatActivity {
-    private BluetoothPeer peer;
-    private int ledNum;
+    BluetoothConnectionService BTService = null;
+    ServiceConnection sConn;
+    private int ledNum = 0;
 
     String[] eyes = {"BOTH EYES", "LEFT EYE", "RIGHT EYE"};
     String[] modes = {"RISING/FALLING MODE", "FALLING/RISING MODE", "STABLE MODE", "RISING MODE", "FALLING MODE"};
@@ -24,22 +26,6 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
-        Bundle arguments = getIntent().getExtras();
-        if (arguments != null) {
-            BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
-            peer = new BluetoothPeer(device);
-            if (device != null) {
-                if (peer.connectBluetooth(this, peer.getDevice()) == false) {
-                    Toast.makeText(this, "FAIL_TO_CONNECT", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                else {
-                    //TODO: Send time
-                }
-            }
-            ledNum = arguments.getInt("button");
-        }
 
         Spinner spinnerModes = (Spinner) findViewById(R.id.spinner_mode);
         ArrayAdapter<String> adapterSpinnerModes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, modes);
@@ -67,6 +53,11 @@ public class SettingsActivity extends AppCompatActivity {
         ArrayAdapter<String> adapterSpinnerEyes = new ArrayAdapter<String>(this, R.layout.for_spinner, R.id.fields_spinner, eyes);
         spinnerEyes.setAdapter(adapterSpinnerEyes);
 
+        Bundle arguments = getIntent().getExtras();
+        if (arguments != null) {
+            ledNum = arguments.getInt("button");
+        }
+
         if (ledNum == 12) {
             spinnerEyes.setEnabled(false);
             spinnerEyes.setBackgroundColor(0xF0C0C0C0);
@@ -75,13 +66,26 @@ public class SettingsActivity extends AppCompatActivity {
         else {
             toolbar.setTitle("CAT_" + Integer.toString(ledNum));
         }
+
+        sConn = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                BTService = ((BluetoothConnectionService.MyBinder) binder).getService();
+            }
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        bindService();
+    }
+
+    private void bindService() {
+        Intent intent = new Intent(this, BluetoothConnectionService.class);
+        bindService(intent, sConn, 0);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (peer != null)
-            peer.close();
     }
 
     private void defaultSettings() {
@@ -101,77 +105,74 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void sendSettings(View v) {
-        int period, start, end;
+        if (BTService != null) {
+            int period, start, end;
 
-        EditText periodText = (EditText) findViewById(R.id.period);
-        EditText startText = (EditText) findViewById(R.id.start);
-        EditText endText = (EditText) findViewById(R.id.end);
-        if ((periodText.getText().length() == 0) || (startText.getText().length() == 0) || (endText.getText().length() == 0)) {
-            Toast.makeText(this, "SET PARAMETERS BEFORE SENDING", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        period = Integer.parseInt(periodText.getText().toString());
-        start = Integer.parseInt(startText.getText().toString());
-        end = Integer.parseInt(endText.getText().toString());
-        if ((period < start) || (period < end)) {
-            Toast.makeText(this, "INVALID PERIOD", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Settings settings = new Settings();
-        Spinner spinnerMode = (Spinner) findViewById(R.id.spinner_mode);
-        settings.setMode((String)spinnerMode.getSelectedItem());
-        RXColorWheel colorPicker = (RXColorWheel) findViewById(R.id.color_wheel);
-        settings.setColor(colorPicker.getColorPointerCustomColor());
-        settings.setPeriod(period);
-        settings.setTSStart(start);
-        settings.setTSEnd(end);
-
-        //CALC LEDNUM, CREATE AND SEND COMMAND MESSAGE
-        int eyeLeftLedNum;
-        Spinner spinnerEye = (Spinner) findViewById(R.id.spinner_eye);
-        String eye = (String)spinnerEye.getSelectedItem();
-
-        if (ledNum < 12)
-        {
-            if (eye.matches(eyes[0])) {
-                settings.setNum(ledNum);
-                this.peer.write(this, settings.createSettingsForCatMessage());
+            EditText periodText = (EditText) findViewById(R.id.period);
+            EditText startText = (EditText) findViewById(R.id.start);
+            EditText endText = (EditText) findViewById(R.id.end);
+            if ((periodText.getText().length() == 0) || (startText.getText().length() == 0) || (endText.getText().length() == 0)) {
+                Toast.makeText(this, "SET PARAMETERS BEFORE SENDING", Toast.LENGTH_SHORT).show();
+                return;
             }
-            else if (eye.matches(eyes[1])) {
-                if ((ledNum < 3) || ((ledNum > 6) && (ledNum < 10)))
-                    eyeLeftLedNum = ledNum * 2 + 1;
-                else
-                    eyeLeftLedNum = ledNum * 2;
-                settings.setNum(eyeLeftLedNum);
-                this.peer.write(this, settings.createSettingsMessage());
+            period = Integer.parseInt(periodText.getText().toString());
+            start = Integer.parseInt(startText.getText().toString());
+            end = Integer.parseInt(endText.getText().toString());
+            if ((period < start) || (period < end)) {
+                Toast.makeText(this, "INVALID PERIOD", Toast.LENGTH_SHORT).show();
+                return;
             }
-            else if (eye.matches(eyes[2])) {
-                if ((ledNum < 3) || ((ledNum > 6) && (ledNum < 10)))
-                    eyeLeftLedNum = ledNum * 2;
-                else
-                    eyeLeftLedNum = ledNum * 2 + 1;
-                settings.setNum(eyeLeftLedNum);
-                this.peer.write(this, settings.createSettingsMessage());
-            }
-            this.peer.read(this);
-        }
-        else if (ledNum == 12)
-        {
-            settings.setNum(23);
-            this.peer.write(this, settings.createSettingsForAllMessage());
-            this.peer.read(this);
-        }
-        else if (ledNum == 13)
-        {
 
+            Settings settings = new Settings();
+            Spinner spinnerMode = (Spinner) findViewById(R.id.spinner_mode);
+            settings.setMode((String)spinnerMode.getSelectedItem());
+            RXColorWheel colorPicker = (RXColorWheel) findViewById(R.id.color_wheel);
+            settings.setColor(colorPicker.getColorPointerCustomColor());
+            settings.setPeriod(period);
+            settings.setTSStart(start);
+            settings.setTSEnd(end);
+
+            //CALC LEDNUM, CREATE AND SEND COMMAND MESSAGE
+            int eyeLeftLedNum;
+            Spinner spinnerEye = (Spinner) findViewById(R.id.spinner_eye);
+            String eye = (String)spinnerEye.getSelectedItem();
+
+            if (ledNum < 12)
+            {
+                if (eye.matches(eyes[0])) {
+                    settings.setNum(ledNum);
+                    BTService.write(settings.createSettingsForCatMessage());
+                }
+                else if (eye.matches(eyes[1])) {
+                    if ((ledNum < 3) || ((ledNum > 6) && (ledNum < 10)))
+                        eyeLeftLedNum = ledNum * 2 + 1;
+                    else
+                        eyeLeftLedNum = ledNum * 2;
+                    settings.setNum(eyeLeftLedNum);
+                    BTService.write(settings.createSettingsMessage());
+                }
+                else if (eye.matches(eyes[2])) {
+                    if ((ledNum < 3) || ((ledNum > 6) && (ledNum < 10)))
+                        eyeLeftLedNum = ledNum * 2;
+                    else
+                        eyeLeftLedNum = ledNum * 2 + 1;
+                    settings.setNum(eyeLeftLedNum);
+                    BTService.write(settings.createSettingsMessage());
+                }
+            }
+            else if (ledNum == 12)
+            {
+                settings.setNum(23);
+                BTService.write(settings.createSettingsForAllMessage());
+            }
         }
     }
 
     public void saveSettings(View v) {
-        Settings settings = new Settings();
-        this.peer.write(this, settings.createSaveMessage());
-        this.peer.read(this);
+        if (BTService != null) {
+            Settings settings = new Settings();
+            BTService.write(settings.createSaveMessage());
+        }
     }
 
 }

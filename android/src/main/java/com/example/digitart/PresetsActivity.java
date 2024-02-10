@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class PresetsActivity extends AppCompatActivity {
 
-    private BluetoothPeer peer;
+    private BluetoothConnectionService peer;
     ArrayList<Presets> presets = new ArrayList<Presets>();
 
     @Override
@@ -25,17 +25,7 @@ public class PresetsActivity extends AppCompatActivity {
 
         Bundle arguments = getIntent().getExtras();
         if (arguments != null) {
-            BluetoothDevice device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
-            peer = new BluetoothPeer(device);
-            if (device != null) {
-                if (peer.connectBluetooth(this, peer.getDevice()) == false) {
-                    Toast.makeText(this, "FAIL_TO_CONNECT", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                else {
-                    //TODO: Send time
-                }
-            }
+            peer = (BluetoothConnectionService) arguments.getSerializable(BluetoothConnectionService.class.getSimpleName());
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_presets);
@@ -73,8 +63,6 @@ public class PresetsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (peer != null)
-            peer.close();
     }
 
 }
