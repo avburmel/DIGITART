@@ -12,17 +12,22 @@
 enum commands_t 
 {
   SAVE = 0,
-  SETTINGS_BRIGHT,
-  SETTINGS_FOR_ALL,
+  SYSTEM_TIME,
+  TIME,
+  BRIGHT,
+  SETTINGS_FOR_ALL = 32,
   SETTINGS_FOR_CAT,
   SETTINGS
 };
 
 #define PROTOCOL_COMMAND_SAVE                      "SAVE" 
-#define PROTOCOL_COMMAND_SETTINGS_BRIGHT           "SETTINGS_BRIGHT" 
+#define PROTOCOL_COMMAND_BRIGHT                    "BRIGHT" 
 #define PROTOCOL_COMMAND_SETTINGS_FOR_ALL          "SETTINGS_FOR_ALL" 
 #define PROTOCOL_COMMAND_SETTINGS_FOR_CAT          "SETTINGS_FOR_CAT" 
 #define PROTOCOL_COMMAND_SETTINGS                  "SETTINGS"
+#define PROTOCOL_COMMAND_SYSTEM_TIME               "SYSTEM_TIME"
+#define PROTOCOL_COMMAND_TIME                      "TIME"
+
 
 enum protocol_ret 
 {

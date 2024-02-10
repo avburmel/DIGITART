@@ -4,7 +4,7 @@
 
 #include <BluetoothSerial.h>
 
-#define CONFIG_BLUETOOTH_MAX_COMMAND_LEN  4096
+#define CONFIG_BLUETOOTH_MAX_COMMAND_LEN  1024
 
 void BlueToothLLInit(void);
 uint32_t  BlueToothLLRead(char* msg);

@@ -6,8 +6,8 @@
 Adafruit_NeoPixel strip(CONFIG_LED_NUMBER, CONFIG_LED_PIN, NEO_GRB + NEO_KHZ800);
 
 hw_timer_t *timerGlobal = NULL;
-uint32_t timerGlobalCnt = 0;
-uint32_t timerGlobalCntPrev = timerGlobalCnt - 1;
+volatile uint32_t timerGlobalCnt = 0;
+volatile uint32_t timerGlobalCntPrev = timerGlobalCnt - 1;
 
 Settings ledsProfile;
 
@@ -18,7 +18,7 @@ void IRAM_ATTR timerGlobalCB()
 
 void ledsSettingsUpdate(void)
 {
-  settingsGet(&ledsProfile);
+  settingsGet((Settings*)&ledsProfile);
 }
 
 static void ledsBegin(void)
@@ -36,31 +36,34 @@ static void ledsStateShow(void)
   strip.show();
 }
 
-static void ledsSetBright(uint8_t bright)
+void ledsSetBright(uint8_t bright)
 {
   strip.setBrightness(bright);
+  ledsClear();
+  ledsStateShow();
 }
 
 void ledsInit(void)
 {
   ledsBegin();
-  ledsClear();
   ledsSettingsUpdate();
-  ledsStateShow();
+  ledsSetBright(0);
   timerGlobal = timerBegin(0, 8000, true);
   timerAttachInterrupt(timerGlobal, &timerGlobalCB, true);
   timerAlarmWrite(timerGlobal, 100, true);
   timerAlarmEnable(timerGlobal);
 }
 
-static void ledsStateCalc(void)
+static int ledsStateCalc(void)
 {
-  uint32_t quant, middlePoint, duty;
-  int state = 0;
+  uint32_t quant, middlePoint, duty, state;
   float brightK;
+  uint32_t colorsPrev[CONFIG_LED_NUMBER] = {0};
 
   for(int i = 0; i < CONFIG_LED_NUMBER; i++)
   {
+    colorsPrev[i] = strip.getPixelColor(i) & 0xFFFFFF;
+    state = 0;
     quant = timerGlobalCnt % ledsProfile.config[i].period;
     if (ledsProfile.config[i].TSStart < ledsProfile.config[i].TSEnd)
     {
@@ -88,11 +91,11 @@ static void ledsStateCalc(void)
     if (state)
     {
       if (ledsProfile.config[i].smooth == 0)
-        strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0], ledsProfile.config[i].color[1], ledsProfile.config[i].color[2]));
+        strip.setPixelColor(i, ledsProfile.config[i].color[0], ledsProfile.config[i].color[1], ledsProfile.config[i].color[2]);
       else if (ledsProfile.config[i].smooth == 1)
-        strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * brightK, ledsProfile.config[i].color[1] * brightK, ledsProfile.config[i].color[2] * brightK));
+        strip.setPixelColor(i, ledsProfile.config[i].color[0] * brightK, ledsProfile.config[i].color[1] * brightK, ledsProfile.config[i].color[2] * brightK);
       else if (ledsProfile.config[i].smooth == 2)
-        strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * (1.0 - brightK), ledsProfile.config[i].color[1] * (1.0 - brightK), ledsProfile.config[i].color[2] * (1.0 - brightK)));
+        strip.setPixelColor(i, ledsProfile.config[i].color[0] * (1.0 - brightK), ledsProfile.config[i].color[1] * (1.0 - brightK), ledsProfile.config[i].color[2] * (1.0 - brightK));
       else
       {
         if (ledsProfile.config[i].smooth == 3)
@@ -100,16 +103,16 @@ static void ledsStateCalc(void)
           if (quant >= ledsProfile.config[i].TSStart)
           {
             if ((quant - ledsProfile.config[i].TSStart) < (duty >> 1))
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * brightK * 2, ledsProfile.config[i].color[1] * brightK * 2, ledsProfile.config[i].color[2] * brightK * 2));
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * brightK * 2, ledsProfile.config[i].color[1] * brightK * 2, ledsProfile.config[i].color[2] * brightK * 2);
             else
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[1] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[2] * ((1.0 - brightK) * 2)));            
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[1] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[2] * ((1.0 - brightK) * 2));            
           }
           else
           {
             if ((ledsProfile.config[i].TSEnd - quant) >= (duty >> 1))
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * brightK * 2, ledsProfile.config[i].color[1] * brightK * 2, ledsProfile.config[i].color[2] * brightK * 2));
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * brightK * 2, ledsProfile.config[i].color[1] * brightK * 2, ledsProfile.config[i].color[2] * brightK * 2);
             else
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[1] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[2] * ((1.0 - brightK) * 2)));
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[1] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[2] * ((1.0 - brightK) * 2));
           }
         }
         if (ledsProfile.config[i].smooth == 4)
@@ -117,31 +120,123 @@ static void ledsStateCalc(void)
           if (quant >= ledsProfile.config[i].TSStart)
           {
             if ((quant - ledsProfile.config[i].TSStart) > (duty >> 1))
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[1] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[2] * (float)((brightK - 0.5) * 2)));
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[1] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[2] * (float)((brightK - 0.5) * 2));
             else
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[1] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[2] * (float)(1.0 - brightK * 2)));            
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[1] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[2] * (float)(1.0 - brightK * 2));            
           }
           else
           {
             if ((ledsProfile.config[i].TSEnd - quant) <= (duty >> 1))
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[1] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[2] * (float)((brightK - 0.5) * 2)));
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[1] * (float)((brightK - 0.5) * 2), ledsProfile.config[i].color[2] * (float)((brightK - 0.5) * 2));
             else
-              strip.setPixelColor(i, strip.Color(ledsProfile.config[i].color[0] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[1] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[2] * (float)(1.0 - brightK * 2)));
+              strip.setPixelColor(i, ledsProfile.config[i].color[0] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[1] * (float)(1.0 - brightK * 2), ledsProfile.config[i].color[2] * (float)(1.0 - brightK * 2));
           }
         }
       }
     }
     else
-      strip.setPixelColor(i, strip.Color(0x00, 0x00, 0x00));
+      strip.setPixelColor(i, 0x00, 0x00, 0x00);
+    
   }
+
+  //NEED TO UPD?
+  for (int i = 0; i < CONFIG_LED_NUMBER; i++)
+  {
+    uint32_t color = strip.getPixelColor(i) & 0xFFFFFF;
+    if (colorsPrev[i] != color)
+    {
+      return 1;
+      break;
+    }     
+  }
+  return 0;
+}
+
+static uint8_t ledsBrightController(void)
+{
+  static uint8_t bright = 0;
+  if (ledsProfile.time.isTimeMode == 0)
+  {
+    if (bright != ledsProfile.bright)
+    {
+      bright = ledsProfile.bright;
+      ledsSetBright(bright);
+    }
+  }
+  else
+  {
+    RTC_Time time;
+    rtcGet(&time);
+    if (rtcTimeCmp(&ledsProfile.time.timeFrom, &ledsProfile.time.timeTo) == 1)
+    {
+      if ((rtcTimeCmp(&ledsProfile.time.timeFrom, &time)) && rtcTimeCmp(&time, &ledsProfile.time.timeTo))
+      {
+        if (bright != ledsProfile.bright)
+        {
+          bright = ledsProfile.bright;
+          ledsSetBright(bright);
+        }
+      }
+      else
+      {
+        if (bright != 0)
+        {
+          bright = 0;
+          ledsSetBright(bright);
+        }
+      }
+    }
+    else
+    {
+      if ((rtcTimeCmp(&ledsProfile.time.timeTo, &time) && rtcTimeCmp(&ledsProfile.time.timeFrom, &time)) || \
+          (rtcTimeCmp(&time, &ledsProfile.time.timeTo) && rtcTimeCmp(&time, &ledsProfile.time.timeFrom)))
+      {
+        if (bright != ledsProfile.bright)
+        {
+          bright = ledsProfile.bright;
+          ledsSetBright(bright);
+        }
+      }
+      else
+      {
+        if (bright != 0)
+        {
+          bright = 0;
+          ledsSetBright(bright);
+        }
+      }
+    }
+  }   
+  return bright;
+}
+
+static int ledsGetPermissionToWork(void)
+{
+  static int state = 1;
+  uint8_t bright = ledsBrightController();
+  if (state)
+  {
+    if (bright == 0)
+      state = 0;
+  }
+  else
+  {
+    if (bright != 0)
+      state = 1;
+  }
+  return state;
 }
 
 void ledsProcess(void)
 { 
   if (timerGlobalCnt != timerGlobalCntPrev)
   {
-    ledsStateCalc();
-    ledsStateShow();
-    timerGlobalCntPrev = timerGlobalCnt;
+    if (ledsGetPermissionToWork())
+    {
+      if (ledsStateCalc())
+        ledsStateShow();
+      timerGlobalCntPrev = timerGlobalCnt;
+    }
   }
+    
 }
