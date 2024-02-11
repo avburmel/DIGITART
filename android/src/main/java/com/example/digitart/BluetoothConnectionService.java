@@ -55,7 +55,7 @@ public class BluetoothConnectionService extends Service {
         }
     }
 
-    private class ConnectedThread extends Thread {
+    private static class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -92,7 +92,7 @@ public class BluetoothConnectionService extends Service {
         private void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
 
             }
         }
@@ -101,7 +101,7 @@ public class BluetoothConnectionService extends Service {
             if (mmSocket != null) {
                 try {
                     mmSocket.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
 
                 }
             }
@@ -123,20 +123,18 @@ public class BluetoothConnectionService extends Service {
     public int connect(BluetoothDevice device) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothSocket mmSocket;
-        BluetoothSocket tmp = null;
         try {
-            tmp = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+            mmSocket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
         } catch (IOException e) {
-
+            return -1;
         }
-        mmSocket = tmp;
         mBluetoothAdapter.cancelDiscovery();
         try {
             mmSocket.connect();
         } catch (IOException e) {
             try {
                 mmSocket.close();
-            } catch (IOException e1) {
+            } catch (IOException ignored) {
 
             }
             return -1;

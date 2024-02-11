@@ -66,6 +66,7 @@ public class ImageActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopService();
+        onBackPressed();
     }
 
     private void connect() {

@@ -98,18 +98,33 @@ public class PresetsActivity extends AppCompatActivity {
                     settings.setNum(23);
                     BTService.write(settings.createSettingsForAllMessage());
                     break;
-                case "TICKER":
+                case "SNAKE":
                     settings.setMode("RISING/FALLING MODE");
                     settings.setColor(preset.getColor());
                     settings.setPeriod(300);
                     for (int i = 0; i < 12; i++) {
                         settings.setTSStart(i * 25);
-                        settings.setTSEnd((i * 25) + 25);
+                        int end = (i * 25) + 125;
+                        if (end > 300)
+                            end = end - 300;
+                        settings.setTSEnd(end);
                         settings.setNum(i);
                         BTService.write(settings.createSettingsForCatMessage());
                     }
                     break;
                 case "RANDOM":
+//                    settings.setMode("RISING/FALLING MODE");
+//                    settings.setColor(preset.getColor());
+//                    settings.setPeriod(300);
+//                    for (int i = 0; i < 12; i++) {
+//                        settings.setTSStart(i * 25);
+//                        int end = (i * 25) + 125;
+//                        if (end > 300)
+//                            end = end - 300;
+//                        settings.setTSEnd(end);
+//                        settings.setNum(i);
+//                        BTService.write(settings.createSettingsForCatMessage());
+//                    }
                     break;
                 default:
                     break;
@@ -126,7 +141,7 @@ public class PresetsActivity extends AppCompatActivity {
         presets.add(new Presets ("VAMPIRE", 0xFFFF0000));
         presets.add(new Presets ("HALLOWEEN", 0xFFF28F1C));
         presets.add(new Presets ("GHOST", 0xFF3FFF89));
-        presets.add(new Presets ("TICKER", 0x996750A4));
+        presets.add(new Presets ("SNAKE", 0x996750A4));
         presets.add(new Presets ("RANDOM", 0xFF000000));
     }
 
