@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.UUID;
-
 
 public class BluetoothConnectionService extends Service {
     private ConnectedThread mConnectedThread = null;
@@ -56,9 +57,11 @@ public class BluetoothConnectionService extends Service {
     }
 
     private static class ConnectedThread extends Thread {
+        private final Queue<String> WriteQueue = new LinkedList<String>();
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+        private boolean needToStop = false;
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -77,14 +80,38 @@ public class BluetoothConnectionService extends Service {
         }
 
         public void run(){
-            byte[] buffer = new byte[1024];
-            int bytes;
+            byte[] readBuffer = new byte[1024];
+            int messageLen = 0;
+            boolean writeMessageSended = true;
+            String writeMessage = "";
+            long timeout = System.currentTimeMillis();
             while (true) {
+                if (needToStop)
+                    return;
+                if (messageLen >= readBuffer.length)
+                    messageLen = 0;
+                if (writeMessageSended && !WriteQueue.isEmpty()) {
+                    writeMessageSended = false;
+                    writeMessage = WriteQueue.remove();
+                    write(writeMessage.getBytes(StandardCharsets.US_ASCII));
+                    timeout = System.currentTimeMillis();
+                }
                 try {
-                    bytes = mmInStream.read(buffer);
-                    //String incomingMessage = new String(buffer, 0, bytes);
-                } catch (IOException e) {
-                    break;
+                    while (mmInStream.available() > 0) {
+                        readBuffer[messageLen++] = (byte) mmInStream.read();
+                        if (readBuffer[messageLen - 1] == 0) {
+                            String incomingMessage = new String(readBuffer, 0, messageLen);
+                            messageLen = 0;
+                            if (incomingMessage.contains("OK"))
+                                writeMessageSended = true;
+                        }
+                    }
+                } catch (IOException ignored) {
+
+                }
+                if (!writeMessageSended && (timeout < System.currentTimeMillis() - 1000)) {
+                    write(writeMessage.getBytes(StandardCharsets.US_ASCII));
+                    timeout = System.currentTimeMillis();
                 }
             }
         }
@@ -104,6 +131,7 @@ public class BluetoothConnectionService extends Service {
                 } catch (IOException ignored) {
 
                 }
+                needToStop = true;
             }
         }
 
@@ -151,7 +179,7 @@ public class BluetoothConnectionService extends Service {
 
     public void write(String message) {
         if (mConnectedThread != null)
-            mConnectedThread.write(message.getBytes(StandardCharsets.US_ASCII));
+            mConnectedThread.WriteQueue.add(message);
     }
 
     public void close() {

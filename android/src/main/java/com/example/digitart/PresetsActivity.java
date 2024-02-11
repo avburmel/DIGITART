@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PresetsActivity extends AppCompatActivity {
 
@@ -112,19 +113,46 @@ public class PresetsActivity extends AppCompatActivity {
                         BTService.write(settings.createSettingsForCatMessage());
                     }
                     break;
+                case "BLINK":
+                    settings.setColor(preset.getColor());
+                    settings.setPeriod(300);
+                    for (int i = 0; i < 12; i++) {
+                        settings.setMode("STABLE MODE");
+                        settings.setTSStart(0);
+                        settings.setTSEnd(300);
+                        settings.setNum(i * 2);
+                        BTService.write(settings.createSettingsMessage());
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        settings.setMode("STABLE MODE");
+                        settings.setTSStart(i * 25);
+                        int end = (i * 25) + 275;
+                        if (end > 300)
+                            end = end - 300;
+                        settings.setTSEnd(end);
+                        settings.setNum(i * 2 + 1);
+                        BTService.write(settings.createSettingsMessage());
+                    }
+                    break;
                 case "RANDOM":
-//                    settings.setMode("RISING/FALLING MODE");
-//                    settings.setColor(preset.getColor());
-//                    settings.setPeriod(300);
-//                    for (int i = 0; i < 12; i++) {
-//                        settings.setTSStart(i * 25);
-//                        int end = (i * 25) + 125;
-//                        if (end > 300)
-//                            end = end - 300;
-//                        settings.setTSEnd(end);
-//                        settings.setNum(i);
-//                        BTService.write(settings.createSettingsForCatMessage());
-//                    }
+                    settings.setMode("RISING/FALLING MODE");
+                    int period, start, end, min, max, red, green, blue;
+                    min = 0;
+                    max = 1000;
+                    for (int i = 0; i < 24; i++) {
+                        period = new Random().nextInt((max - min)) + min;
+                        start = new Random().nextInt((period - min)) + min;
+                        end = new Random().nextInt((period - min)) + min;
+                        settings.setPeriod(period);
+                        settings.setTSStart(start);
+                        settings.setTSEnd(end);
+                        red = new Random().nextInt(128);
+                        green = new Random().nextInt(128);
+                        blue = new Random().nextInt(128);
+                        settings.setColor((red << 16) | (green << 8) | blue);
+                        settings.setNum(i);
+                        BTService.write(settings.createSettingsMessage());
+                    }
                     break;
                 default:
                     break;
@@ -142,6 +170,7 @@ public class PresetsActivity extends AppCompatActivity {
         presets.add(new Presets ("HALLOWEEN", 0xFFF28F1C));
         presets.add(new Presets ("GHOST", 0xFF3FFF89));
         presets.add(new Presets ("SNAKE", 0x996750A4));
+        presets.add(new Presets ("BLINK", 0xFF00007F));
         presets.add(new Presets ("RANDOM", 0xFF000000));
     }
 
