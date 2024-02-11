@@ -82,7 +82,7 @@ public class BluetoothConnectionService extends Service {
             while (true) {
                 try {
                     bytes = mmInStream.read(buffer);
-                    String incomingMessage = new String(buffer, 0, bytes);
+                    //String incomingMessage = new String(buffer, 0, bytes);
                 } catch (IOException e) {
                     break;
                 }
@@ -152,11 +152,13 @@ public class BluetoothConnectionService extends Service {
     }
 
     public void write(String message) {
-        mConnectedThread.write(message.getBytes(StandardCharsets.US_ASCII));
+        if (mConnectedThread != null)
+            mConnectedThread.write(message.getBytes(StandardCharsets.US_ASCII));
     }
 
     public void close() {
-        mConnectedThread.close();
+        if (mConnectedThread != null)
+            mConnectedThread.close();
     }
 
 }

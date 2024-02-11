@@ -67,7 +67,54 @@ public class PresetsActivity extends AppCompatActivity {
     }
 
     private void presetSet(Presets preset) {
-
+        if (BTService != null) {
+            String id = preset.getName();
+            Settings settings = new Settings();
+            switch(id) {
+                case "VAMPIRE":
+                    settings.setMode("FALLING MODE");
+                    settings.setColor(preset.getColor());
+                    settings.setPeriod(300);
+                    settings.setTSStart(0);
+                    settings.setTSEnd(300);
+                    settings.setNum(23);
+                    BTService.write(settings.createSettingsForAllMessage());
+                    break;
+                case "HALLOWEEN":
+                    settings.setMode("STABLE MODE");
+                    settings.setColor(preset.getColor());
+                    settings.setPeriod(300);
+                    settings.setTSStart(0);
+                    settings.setTSEnd(300);
+                    settings.setNum(23);
+                    BTService.write(settings.createSettingsForAllMessage());
+                    break;
+                case "GHOST":
+                    settings.setMode("RISING/FALLING MODE");
+                    settings.setColor(preset.getColor());
+                    settings.setPeriod(500);
+                    settings.setTSStart(0);
+                    settings.setTSEnd(500);
+                    settings.setNum(23);
+                    BTService.write(settings.createSettingsForAllMessage());
+                    break;
+                case "TICKER":
+                    settings.setMode("RISING/FALLING MODE");
+                    settings.setColor(preset.getColor());
+                    settings.setPeriod(300);
+                    for (int i = 0; i < 12; i++) {
+                        settings.setTSStart(i * 25);
+                        settings.setTSEnd((i * 25) + 25);
+                        settings.setNum(i);
+                        BTService.write(settings.createSettingsForCatMessage());
+                    }
+                    break;
+                case "RANDOM":
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void bindService() {
@@ -77,8 +124,8 @@ public class PresetsActivity extends AppCompatActivity {
 
     private void setInitialData() {
         presets.add(new Presets ("VAMPIRE", 0xFFFF0000));
-        presets.add(new Presets ("HALLOWEEN", 0xFFFFA500));
-        presets.add(new Presets ("GHOST", 0xFF30D5C8));
+        presets.add(new Presets ("HALLOWEEN", 0xFFF28F1C));
+        presets.add(new Presets ("GHOST", 0xFF3FFF89));
         presets.add(new Presets ("TICKER", 0x996750A4));
         presets.add(new Presets ("RANDOM", 0xFF000000));
     }

@@ -85,7 +85,8 @@ public class ImageActivity extends AppCompatActivity {
     private void stopService() {
         if (BTService != null) {
             if (BTService.isConnected())
-                stopService(new Intent(this, BluetoothConnectionService.class));
+                BTService.close();
+            stopService(new Intent(this, BluetoothConnectionService.class));
         }
     }
 
