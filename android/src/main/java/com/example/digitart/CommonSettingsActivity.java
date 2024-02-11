@@ -75,6 +75,7 @@ public class CommonSettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(sConn);
     }
 
     public void setTime(View v) {

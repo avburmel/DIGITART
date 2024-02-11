@@ -16,7 +16,7 @@ import java.util.UUID;
 
 
 public class BluetoothConnectionService extends Service {
-    private ConnectedThread mConnectedThread;
+    private ConnectedThread mConnectedThread = null;
     MyBinder binder = new MyBinder();
 
     @Override
@@ -98,9 +98,20 @@ public class BluetoothConnectionService extends Service {
         }
 
         public void close() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) { }
+            if (mmSocket != null) {
+                try {
+                    mmSocket.close();
+                } catch (IOException e) {
+
+                }
+            }
+        }
+
+        public boolean isConnected() {
+            if (mmSocket != null) {
+                return mmSocket.isConnected();
+            }
+            return false;
         }
     }
 
@@ -109,7 +120,7 @@ public class BluetoothConnectionService extends Service {
         mConnectedThread.start();
     }
 
-    public void connect(BluetoothDevice device) {
+    public int connect(BluetoothDevice device) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothSocket mmSocket;
         BluetoothSocket tmp = null;
@@ -128,9 +139,18 @@ public class BluetoothConnectionService extends Service {
             } catch (IOException e1) {
 
             }
+            return -1;
         }
         connected(mmSocket);
+        return 0;
     }
+
+    public boolean isConnected() {
+        if (mConnectedThread != null)
+            return mConnectedThread.isConnected();
+        return false;
+    }
+
     public void write(String message) {
         mConnectedThread.write(message.getBytes(StandardCharsets.US_ASCII));
     }

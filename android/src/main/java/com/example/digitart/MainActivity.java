@@ -17,9 +17,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         RecyclerView recyclerView = findViewById(R.id.connectionList);
 
-        BluetoothDeviceAdapter.OnStateClickListener stateClickListener = new BluetoothDeviceAdapter.OnStateClickListener() {
+        BluetoothDeviceAdapter.OnDeviceClickListener stateClickListener = new BluetoothDeviceAdapter.OnDeviceClickListener() {
             @Override
-            public void onStateClick(BluetoothDevice peer, int position) {
+            public void onDeviceClick(BluetoothDevice peer) {
                 openImageActivity(peer);
             }
         };

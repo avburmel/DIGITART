@@ -70,8 +70,10 @@ public class ImageActivity extends AppCompatActivity {
 
     private void connect() {
         if ((BTService != null) && (device != null)) {
-            BTService.connect(device);
-            sendSystemTime();
+            if (BTService.connect(device) == 0)
+                sendSystemTime();
+            else
+                finish();
         }
     }
     private void startService(BluetoothDevice device) {
@@ -81,9 +83,10 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     private void stopService() {
-        if (BTService != null)
-            BTService.close();
-        stopService(new Intent(this, BluetoothConnectionService.class));
+        if (BTService != null) {
+            if (BTService.isConnected())
+                stopService(new Intent(this, BluetoothConnectionService.class));
+        }
     }
 
     public void onClickButton(View v) {

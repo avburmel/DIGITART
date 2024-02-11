@@ -2,31 +2,28 @@ package com.example.digitart;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.bluetooth.BluetoothDevice;
-import android.content.pm.PackageManager;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class PresetsActivity extends AppCompatActivity {
 
-    private BluetoothConnectionService peer;
+    BluetoothConnectionService BTService = null;
+    ServiceConnection sConn;
+
     ArrayList<Presets> presets = new ArrayList<Presets>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_presets);
-
-        Bundle arguments = getIntent().getExtras();
-        if (arguments != null) {
-            peer = (BluetoothConnectionService) arguments.getSerializable(BluetoothConnectionService.class.getSimpleName());
-        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_presets);
         setSupportActionBar(toolbar);
@@ -48,10 +45,36 @@ public class PresetsActivity extends AppCompatActivity {
         });
 
         setInitialData();
+        PresetsAdapter.OnPresetClickListener stateClickListener = new PresetsAdapter.OnPresetClickListener() {
+            @Override
+            public void onPresetClick(Presets preset) {
+                presetSet(preset);
+            }
+        };
         RecyclerView recyclerView = findViewById(R.id.presets_list);
-        PresetsAdapter adapter = new PresetsAdapter(this, presets);
+        PresetsAdapter adapter = new PresetsAdapter(this, presets, stateClickListener);
         recyclerView.setAdapter(adapter);
+
+        sConn = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                BTService = ((BluetoothConnectionService.MyBinder) binder).getService();
+            }
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        bindService();
     }
+
+    private void presetSet(Presets preset) {
+
+    }
+
+    private void bindService() {
+        Intent intent = new Intent(this, BluetoothConnectionService.class);
+        bindService(intent, sConn, 0);
+    }
+
     private void setInitialData() {
         presets.add(new Presets ("VAMPIRE", 0xFFFF0000));
         presets.add(new Presets ("HALLOWEEN", 0xFFFFA500));
@@ -63,6 +86,7 @@ public class PresetsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(sConn);
     }
 
 }

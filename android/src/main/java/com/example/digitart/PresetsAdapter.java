@@ -1,4 +1,5 @@
 package com.example.digitart;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +13,15 @@ import java.util.List;
 
 public class PresetsAdapter extends RecyclerView.Adapter<PresetsAdapter.ViewHolder> {
 
+    interface OnPresetClickListener{
+        void onPresetClick(Presets preset);
+    }
+    private final PresetsAdapter.OnPresetClickListener onClickListener;
     private final LayoutInflater inflater;
     private final List<Presets> presets;
 
-    PresetsAdapter(Context context, List<Presets> presets) {
+    PresetsAdapter(Context context, List<Presets> presets, PresetsAdapter.OnPresetClickListener onClickListener) {
+        this.onClickListener = onClickListener;
         this.presets = presets;
         this.inflater = LayoutInflater.from(context);
     }
@@ -27,9 +33,16 @@ public class PresetsAdapter extends RecyclerView.Adapter<PresetsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(PresetsAdapter.ViewHolder holder, int position) {
-        Presets state = presets.get(position);
-        holder.nameView.setText(state.getName());
-        holder.nameView.setTextColor(state.getColor());
+        Presets preset = presets.get(position);
+        holder.nameView.setText(preset.getName());
+        holder.nameView.setTextColor(preset.getColor());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onPresetClick(preset);
+            }
+        });
     }
 
     @Override

@@ -86,6 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(sConn);
     }
 
     private void defaultSettings() {

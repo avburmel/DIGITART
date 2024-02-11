@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder> {
-    interface OnStateClickListener{
-        void onStateClick(BluetoothDevice state, int position);
+    interface OnDeviceClickListener{
+        void onDeviceClick(BluetoothDevice device);
     }
-    private final OnStateClickListener onClickListener;
+    private final OnDeviceClickListener onClickListener;
     private final LayoutInflater inflater;
     private final ArrayList<BluetoothDevice> peers;
 
-    BluetoothDeviceAdapter(Context context, OnStateClickListener onClickListener) {
+    BluetoothDeviceAdapter(Context context, OnDeviceClickListener onClickListener) {
         this.onClickListener = onClickListener;
         this.peers = setBluetoothDevices(context);
         this.inflater = LayoutInflater.from(context);
@@ -43,9 +43,8 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                onClickListener.onStateClick(peer, position);
+            public void onClick(View v) {
+                onClickListener.onDeviceClick(peer);
             }
         });
     }
