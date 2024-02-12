@@ -109,7 +109,7 @@ public class BluetoothConnectionService extends Service {
                 } catch (IOException ignored) {
 
                 }
-                if (!writeMessageSended && (timeout < System.currentTimeMillis() - 1000)) {
+                if (!writeMessageSended && (timeout < System.currentTimeMillis() - 10000)) {
                     write(writeMessage.getBytes(StandardCharsets.US_ASCII));
                     timeout = System.currentTimeMillis();
                 }
@@ -163,7 +163,7 @@ public class BluetoothConnectionService extends Service {
             try {
                 mmSocket.close();
             } catch (IOException ignored) {
-
+                return -1;
             }
             return -1;
         }

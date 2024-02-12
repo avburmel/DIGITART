@@ -16,7 +16,8 @@ public class Settings {
     private int TSStart;
     private int TSEnd;
 
-    String[] modes = {"STABLE MODE", "RISING MODE", "FALLING MODE", "RISING/FALLING MODE", "FALLING/RISING MODE"};
+    String[] modes = {"STABLE MODE", "RISING MODE", "FALLING MODE", "RISING/FALLING MODE",
+            "FALLING/RISING MODE", "RISING MODE INV", "FALLING MODE INV", "RISING/FALLING MODE INV", "FALLING/RISING MODE INV"};
     public Settings() {
         this.num = 0;
         this.mode = 3;

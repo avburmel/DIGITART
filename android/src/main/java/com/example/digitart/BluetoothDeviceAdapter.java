@@ -3,6 +3,7 @@ package com.example.digitart;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;

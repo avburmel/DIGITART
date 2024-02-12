@@ -124,9 +124,9 @@ public class PresetsActivity extends AppCompatActivity {
                         BTService.write(settings.createSettingsMessage());
                     }
                     for (int i = 0; i < 12; i++) {
-                        settings.setMode("STABLE MODE");
+                        settings.setMode("FALLING/RISING MODE INV");
                         settings.setTSStart(i * 25);
-                        int end = (i * 25) + 275;
+                        int end = (i * 25) + 125;
                         if (end > 300)
                             end = end - 300;
                         settings.setTSEnd(end);

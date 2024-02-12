@@ -3,6 +3,7 @@ package com.example.digitart;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requests() {
+        //ENABLE BLUETOOTH
+        Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(bluetoothIntent, 1);
+        //REQUEST PERMISSIONS
         String[] permissions = {Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN,
                 Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         ActivityCompat.requestPermissions(this, permissions, 2);

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -16,7 +17,7 @@ import android.view.View;
 import java.util.Calendar;
 
 public class ImageActivity extends AppCompatActivity {
-
+    ProgressDialog pd;
     BluetoothDevice device = null;
     BluetoothConnectionService BTService = null;
     ServiceConnection sConn;
@@ -57,6 +58,9 @@ public class ImageActivity extends AppCompatActivity {
 
         Bundle arguments = getIntent().getExtras();
         if (arguments != null) {
+            pd = new ProgressDialog(ImageActivity.this);
+            pd.setTitle("CONNECTION");
+            pd.show();
             device = arguments.getParcelable(BluetoothDevice.class.getSimpleName());
             startService(device);
         }
@@ -74,7 +78,8 @@ public class ImageActivity extends AppCompatActivity {
             if (BTService.connect(device) == 0)
                 sendSystemTime();
             else
-                finish();
+                onBackPressed();
+            pd.dismiss();
         }
     }
     private void startService(BluetoothDevice device) {
