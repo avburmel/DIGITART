@@ -75,39 +75,29 @@ public class PresetsActivity extends AppCompatActivity {
                 case "VAMPIRE":
                     settings.setMode("FALLING MODE");
                     settings.setColor(preset.getColor());
-                    settings.setPeriod(300);
-                    settings.setTSStart(0);
-                    settings.setTSEnd(300);
-                    settings.setNum(23);
                     BTService.write(settings.createSettingsForAllMessage());
                     break;
                 case "HALLOWEEN":
                     settings.setMode("STABLE MODE");
                     settings.setColor(preset.getColor());
-                    settings.setPeriod(300);
-                    settings.setTSStart(0);
-                    settings.setTSEnd(300);
-                    settings.setNum(23);
                     BTService.write(settings.createSettingsForAllMessage());
                     break;
                 case "GHOST":
                     settings.setMode("RISING/FALLING MODE");
                     settings.setColor(preset.getColor());
-                    settings.setPeriod(500);
-                    settings.setTSStart(0);
-                    settings.setTSEnd(500);
-                    settings.setNum(23);
+                    settings.setPeriod(5000);
+                    settings.setTSEnd(5000);
                     BTService.write(settings.createSettingsForAllMessage());
                     break;
                 case "SNAKE":
                     settings.setMode("RISING/FALLING MODE");
                     settings.setColor(preset.getColor());
-                    settings.setPeriod(300);
+                    settings.setPeriod(3000);
                     for (int i = 0; i < 12; i++) {
-                        settings.setTSStart(i * 25);
-                        int end = (i * 25) + 125;
-                        if (end > 300)
-                            end = end - 300;
+                        settings.setTSStart(i * 250);
+                        int end = (i * 250) + 1250;
+                        if (end > 3000)
+                            end = end - 3000;
                         settings.setTSEnd(end);
                         settings.setNum(i);
                         BTService.write(settings.createSettingsForCatMessage());
@@ -115,31 +105,25 @@ public class PresetsActivity extends AppCompatActivity {
                     break;
                 case "BLINK":
                     settings.setColor(preset.getColor());
-                    settings.setPeriod(300);
-                    for (int i = 0; i < 12; i++) {
-                        settings.setMode("STABLE MODE");
-                        settings.setTSStart(0);
-                        settings.setTSEnd(300);
-                        settings.setNum(i * 2);
-                        BTService.write(settings.createSettingsMessage());
-                    }
+                    settings.setMode("STABLE MODE");
+                    BTService.write(settings.createSettingsForAllMessage());
                     for (int i = 0; i < 12; i++) {
                         settings.setMode("FALLING/RISING MODE INV");
-                        settings.setTSStart(i * 25);
-                        int end = (i * 25) + 125;
-                        if (end > 300)
-                            end = end - 300;
+                        settings.setTSStart(i * 250);
+                        int end = (i * 250) + 1250;
+                        if (end > 3000)
+                            end = end - 3000;
                         settings.setTSEnd(end);
                         settings.setNum(i * 2 + 1);
                         BTService.write(settings.createSettingsMessage());
                     }
                     break;
                 case "RANDOM":
-                    settings.setMode("RISING/FALLING MODE");
+                    settings.setMode("FALLING/RISING MODE INV");
                     int period, start, end, min, max, red, green, blue;
-                    min = 0;
-                    max = 1000;
-                    for (int i = 0; i < 24; i++) {
+                    min = 200;
+                    max = 5000;
+                    for (int i = 0; i < 12; i++) {
                         period = new Random().nextInt((max - min)) + min;
                         start = new Random().nextInt((period - min)) + min;
                         end = new Random().nextInt((period - min)) + min;
@@ -151,7 +135,7 @@ public class PresetsActivity extends AppCompatActivity {
                         blue = new Random().nextInt(128);
                         settings.setColor((red << 16) | (green << 8) | blue);
                         settings.setNum(i);
-                        BTService.write(settings.createSettingsMessage());
+                        BTService.write(settings.createSettingsForCatMessage());
                     }
                     break;
                 default:
@@ -178,6 +162,13 @@ public class PresetsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(sConn);
+    }
+
+    public void saveSettings(View v) {
+        if (BTService != null) {
+            Settings settings = new Settings();
+            BTService.write(settings.createSaveMessage());
+        }
     }
 
 }

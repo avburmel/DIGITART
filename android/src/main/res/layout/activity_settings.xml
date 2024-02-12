@@ -50,7 +50,7 @@
                     android:id="@+id/period"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Period (0 to 9999999999 in 10ms unit)"
+                    android:hint="Period (0 to 9999999999 in ms)"
                     android:textAlignment="center"
                     android:inputType="number"
                     android:maxLength="10"

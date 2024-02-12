@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
         BluetoothDeviceAdapter adapter = new BluetoothDeviceAdapter(this, stateClickListener);
         if (adapter.getItemCount() > 0) {
             recyclerView.setAdapter(adapter);
+        }
+        else {
+            TextView textView = findViewById(R.id.textView);
+            textView.setText("NO BONDED DIGITART DEVICES");
         }
     }
 

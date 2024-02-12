@@ -12,6 +12,7 @@ import android.app.TimePickerDialog;
 import android.os.IBinder;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -36,6 +37,42 @@ public class CommonSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_common_settings);
         timeFrom = findViewById(R.id.time_from);
         timeTo = findViewById(R.id.time_to);
+
+        Switch timeModeOn = findViewById(R.id.switch_time_mode);
+        timeModeOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    timeFrom.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setTime(v);
+                        }
+                    });
+                    timeTo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setTime(v);
+                        }
+                    });
+                }
+                else {
+                    timeFrom.setText("");
+                    timeFrom.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                    timeTo.setText("");
+                    timeTo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                }
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_settings);
         setSupportActionBar(toolbar);

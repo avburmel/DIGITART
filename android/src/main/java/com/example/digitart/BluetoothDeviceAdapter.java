@@ -25,8 +25,8 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
     private final ArrayList<BluetoothDevice> peers;
 
     BluetoothDeviceAdapter(Context context, OnDeviceClickListener onClickListener) {
-        this.onClickListener = onClickListener;
         this.peers = setBluetoothDevices(context);
+        this.onClickListener = onClickListener;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -41,7 +41,6 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
         BluetoothDevice peer = peers.get(position);
         holder.macView.setText(peer.getAddress());
         holder.nameView.setText(peer.getName());
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

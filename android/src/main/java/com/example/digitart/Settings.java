@@ -19,12 +19,12 @@ public class Settings {
     String[] modes = {"STABLE MODE", "RISING MODE", "FALLING MODE", "RISING/FALLING MODE",
             "FALLING/RISING MODE", "RISING MODE INV", "FALLING MODE INV", "RISING/FALLING MODE INV", "FALLING/RISING MODE INV"};
     public Settings() {
-        this.num = 0;
+        this.num = 23;
         this.mode = 3;
-        this.color = 0xFF0000;
-        this.period = 500;
+        this.color = 0x000000FF;
+        this.period = 3000;
         this.TSStart = 0;
-        this.TSEnd = 500;
+        this.TSEnd = 3000;
     }
 
     public int getMode() {
@@ -86,9 +86,9 @@ public class Settings {
         String num = Integer.toString(this.num);
         String mode = Integer.toString(this.mode);
         String color = Integer.toString(this.color);
-        String period = Integer.toString(this.period);
-        String start = Integer.toString(this.TSStart);
-        String end = Integer.toString(this.TSEnd);
+        String period = Integer.toString(this.period / 10);
+        String start = Integer.toString(this.TSStart / 10);
+        String end = Integer.toString(this.TSEnd / 10);
         msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end + '\0';
         return msg;
     }
@@ -105,9 +105,9 @@ public class Settings {
         String num = Integer.toString(this.num);
         String mode = Integer.toString(this.mode);
         String color = Integer.toString(this.color);
-        String period = Integer.toString(this.period);
-        String start = Integer.toString(this.TSStart);
-        String end = Integer.toString(this.TSEnd);
+        String period = Integer.toString(this.period / 10);
+        String start = Integer.toString(this.TSStart / 10);
+        String end = Integer.toString(this.TSEnd / 10);
         msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end + '\0';
         return msg;
     }
@@ -115,12 +115,12 @@ public class Settings {
     public String createSettingsForAllMessage() {
         //DIGITART # 1 # SETTINGS_FOR_ALL # num 0: smooth 3: color 16777215: period 400: TSStart 0: TSEnd 400
         String msg = "DIGITART # 1 # SETTINGS_FOR_ALL # ";
-        String num = Integer.toString(this.num);
+        String num = Integer.toString(23);
         String mode = Integer.toString(this.mode);
         String color = Integer.toString(this.color);
-        String period = Integer.toString(this.period);
-        String start = Integer.toString(this.TSStart);
-        String end = Integer.toString(this.TSEnd);
+        String period = Integer.toString(this.period / 10);
+        String start = Integer.toString(this.TSStart / 10);
+        String end = Integer.toString(this.TSEnd / 10);
         msg = msg + "num " + num + ": smooth " + mode + ": color " + color + ": period " + period + ": TSStart " + start + ": TSEnd " + end + '\0';
         return msg;
     }
