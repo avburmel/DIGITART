@@ -35,19 +35,26 @@ public class CommonSettingsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_common_settings);
+
         timeFrom = findViewById(R.id.time_from);
         timeTo = findViewById(R.id.time_to);
+        TextView textTimeFrom = findViewById(R.id.text_time_from);
+        textTimeFrom.setTextColor(timeFrom.getHintTextColors());
+        TextView textTimeTo = findViewById(R.id.text_time_to);
+        textTimeTo.setTextColor(timeTo.getHintTextColors());
 
         Switch timeModeOn = findViewById(R.id.switch_time_mode);
         timeModeOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    textTimeFrom.setTextColor(timeFrom.getTextColors());
                     timeFrom.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             setTime(v);
                         }
                     });
+                    textTimeTo.setTextColor(timeTo.getTextColors());
                     timeTo.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -56,6 +63,7 @@ public class CommonSettingsActivity extends AppCompatActivity {
                     });
                 }
                 else {
+                    textTimeFrom.setTextColor(timeFrom.getHintTextColors());
                     timeFrom.setText("");
                     timeFrom.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -63,6 +71,7 @@ public class CommonSettingsActivity extends AppCompatActivity {
 
                         }
                     });
+                    textTimeTo.setTextColor(timeTo.getHintTextColors());
                     timeTo.setText("");
                     timeTo.setOnClickListener(new View.OnClickListener() {
                         @Override

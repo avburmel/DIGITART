@@ -1,5 +1,9 @@
 package com.example.digitart;
 
+import static androidx.core.app.ActivityCompat.startActivityForResult;
+
+import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -67,7 +71,10 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
         ArrayList<BluetoothDevice> peers = new ArrayList<BluetoothDevice>();
         Set<BluetoothDevice> devices;
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        while (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED);
+        if (!adapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult((Activity) context, enableBtIntent, 1, null);
+        }
         devices = adapter.getBondedDevices();
         if (devices.size() > 0) {
             for (BluetoothDevice bluetoothDevice : devices) {
