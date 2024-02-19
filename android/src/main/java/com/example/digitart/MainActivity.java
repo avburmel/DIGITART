@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.S)
+    //@RequiresApi(api = Build.VERSION_CODES.S)
     private void requests() {
         //REQUEST PERMISSIONS
         String[] permissions = {Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN};
