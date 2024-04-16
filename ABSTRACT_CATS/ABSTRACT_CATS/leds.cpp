@@ -90,15 +90,15 @@ static int ledsStateCalc(void)
     }
     if (state)
     {
-      if (ledsProfile.config[i].smooth == 0)
+      if (ledsProfile.config[i].smooth == MODE_STABLE)
         strip.setPixelColor(i, ledsProfile.config[i].color[0], ledsProfile.config[i].color[1], ledsProfile.config[i].color[2]);
-      else if (ledsProfile.config[i].smooth == 1)
+      else if ((ledsProfile.config[i].smooth == MODE_RISING) || (ledsProfile.config[i].smooth == MODE_RISING_INV))
         strip.setPixelColor(i, ledsProfile.config[i].color[0] * brightK, ledsProfile.config[i].color[1] * brightK, ledsProfile.config[i].color[2] * brightK);
-      else if (ledsProfile.config[i].smooth == 2)
+      else if ((ledsProfile.config[i].smooth == MODE_FALLING) || (ledsProfile.config[i].smooth == MODE_FALLING_INV))
         strip.setPixelColor(i, ledsProfile.config[i].color[0] * (1.0 - brightK), ledsProfile.config[i].color[1] * (1.0 - brightK), ledsProfile.config[i].color[2] * (1.0 - brightK));
       else
       {
-        if (ledsProfile.config[i].smooth == 3)
+        if ((ledsProfile.config[i].smooth == MODE_RISING_FALLING) || (ledsProfile.config[i].smooth == MODE_RISING_FALLING_INV))
         {
           if (quant >= ledsProfile.config[i].TSStart)
           {
@@ -115,7 +115,7 @@ static int ledsStateCalc(void)
               strip.setPixelColor(i, ledsProfile.config[i].color[0] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[1] * ((1.0 - brightK) * 2), ledsProfile.config[i].color[2] * ((1.0 - brightK) * 2));
           }
         }
-        if (ledsProfile.config[i].smooth == 4)
+        if ((ledsProfile.config[i].smooth == MODE_FALLING_RISING) || (ledsProfile.config[i].smooth == MODE_FALLING_RISING_INV))
         {
           if (quant >= ledsProfile.config[i].TSStart)
           {
@@ -135,7 +135,13 @@ static int ledsStateCalc(void)
       }
     }
     else
-      strip.setPixelColor(i, 0x00, 0x00, 0x00);
+    {
+      if (ledsProfile.config[i].smooth > MODE_FALLING_RISING)
+        strip.setPixelColor(i, ledsProfile.config[i].color[0], ledsProfile.config[i].color[1], ledsProfile.config[i].color[2]);
+      else
+        strip.setPixelColor(i, 0x00, 0x00, 0x00);
+    }
+      
     
   }
 
@@ -144,10 +150,7 @@ static int ledsStateCalc(void)
   {
     uint32_t color = strip.getPixelColor(i) & 0xFFFFFF;
     if (colorsPrev[i] != color)
-    {
       return 1;
-      break;
-    }     
   }
   return 0;
 }

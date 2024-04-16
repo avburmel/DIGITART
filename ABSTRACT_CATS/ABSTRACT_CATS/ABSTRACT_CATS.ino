@@ -18,9 +18,7 @@ void loop() {
   if (messageLen)    
   {
     if (ProtocolParser(message, messageLen) == PROTOCOL_OK)
-    {
       BlueToothLLWrite("OK");
-    }
     else
       BlueToothLLWrite("ERROR");
   }

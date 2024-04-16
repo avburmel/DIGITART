@@ -140,7 +140,7 @@ static protocol_ret ProtocolParseDataCommand(char* data, commands_t commandCode)
       }
     }
   
-    config.smooth = fieldVal[1];
+    config.smooth = (led_mode_t)fieldVal[1];
     config.color[0] = (fieldVal[2] & 0xFF0000) >> 16;
     config.color[1] = (fieldVal[2] & 0xFF00) >> 8;
     config.color[2] = fieldVal[2] & 0xFF;

@@ -34,4 +34,5 @@ uint32_t BlueToothLLRead(char* msg)
 void BlueToothLLWrite(char* text)
 {
   BL.println(text);
+  BL.write(0);
 }

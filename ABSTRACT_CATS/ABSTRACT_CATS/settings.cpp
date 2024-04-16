@@ -37,7 +37,7 @@ static void settingsDefaultSave(void)
     settings.config[i].color[0] = 128;
     settings.config[i].color[1] = 0;
     settings.config[i].color[2] = 0;
-    settings.config[i].smooth = 3;
+    settings.config[i].smooth = MODE_RISING_FALLING;
     settings.config[i].period = 500;
     settings.config[i].TSStart = 0;
     settings.config[i].TSEnd = 500;
